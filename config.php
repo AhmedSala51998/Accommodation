@@ -1,16 +1,16 @@
 <?php
 // config.php
 $host = 'localhost';
-$db   = 'accommodation_db';
-$user = 'root';
-$pass = ''; // Default XAMPP password is empty
+$db = 'u552468652_accommodation';
+$user = 'u552468652_accommodation';
+$pass = 'Accommodation2026'; // Default XAMPP password is empty
 $charset = 'utf8mb4';
 
 $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
 $options = [
-    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-    PDO::ATTR_EMULATE_PREPARES   => false,
+     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+     PDO::ATTR_EMULATE_PREPARES => false,
 ];
 
 try {
