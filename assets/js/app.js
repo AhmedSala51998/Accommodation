@@ -14,11 +14,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Shared Dropdown Options
     const nationalityOptions = `
-        <option value="أثيوبيا">أثيوبيا</option>
+        <option value="اثيوبيا">اثيوبيا</option>
         <option value="بوروندي">بوروندي</option>
         <option value="الفلبين">الفلبين</option>
         <option value="سريلانكا">سريلانكا</option>
-        <option value="أوغندا">أوغندا</option>
+        <option value="اوغندا">اوغندا</option>
         <option value="كينيا">كينيا</option>
         <option value="الهند">الهند</option>
         <option value="بنجلاديش">بنجلاديش</option>
