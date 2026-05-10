@@ -412,12 +412,14 @@ tr:hover { background: #f8fafc; }
 .toast i { font-size: 22px; }
 .toast span { font-weight: 700; font-size: 15px; color: var(--text-main); }
 
-/* Print Styles */
+/* Print Styles Enhanced */
 @media print {
-    @page { size: A3 landscape; margin: 10mm; }
-    header, .filters-section, .header-actions, #selectAll, .row-select, .btn, .modal, .toast-container, .details-cell { display: none !important; }
-    body { background: #fff !important; color: #000 !important; overflow: visible !important; }
+    @page { size: A3 landscape; margin: 5mm; }
+    header, .filters-section, .header-actions, #selectAll, .row-select, .btn, .modal, .toast-container, .details-cell, .no-print { display: none !important; }
+    .print-header { display: block !important; }
+    body { background: #fff !important; color: #000 !important; overflow: visible !important; -webkit-print-color-adjust: exact; }
     .dashboard-container { max-width: 100% !important; margin: 0 !important; padding: 0 !important; }
-    table { width: 100% !important; border: 1px solid #000 !important; border-collapse: collapse !important; }
-    th, td { border: 1px solid #000 !important; font-size: 8pt !important; padding: 4px !important; color: #000 !important; background: none !important; }
+    table { width: 100% !important; border: none !important; border-collapse: collapse !important; }
+    th, td { border: none !important; font-size: 10pt !important; padding: 10px 5px !important; color: #000 !important; font-weight: bold !important; text-align: center !important; }
+    thead { background: #eee !important; }
 }

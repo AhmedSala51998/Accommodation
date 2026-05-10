@@ -24,6 +24,14 @@
             </div>
         </header>
 
+        <div class="print-header" style="display: none;">
+            <h1 style="text-align: center; margin-bottom: 20px; border-bottom: 3px solid #000; padding-bottom: 10px;">تقرير بيانات سكن العاملات</h1>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 15px; font-weight: bold;">
+                <span>تاريخ التقرير: <?php echo date('Y-m-d'); ?></span>
+                <span>الفرع: الإدارة العامة</span>
+            </div>
+        </div>
+
         <section class="filters-section">
             <div class="search-box">
                 <i class="fas fa-search"></i>
@@ -92,7 +100,7 @@
                         <th>الإجراء</th>
                         <th>التذكرة</th>
                         <th>التسوية</th>
-                        <th style="width: 80px;">تفاصيل</th>
+                        <th style="width: 80px;" class="no-print">تفاصيل</th>
                     </tr>
                 </thead>
                 <tbody id="workerBody">
