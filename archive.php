@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام إدارة سكن العاملات</title>
+    <title>أرشيف العاملات</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css">
@@ -12,32 +12,30 @@
 
 <body>
     <div class="dashboard-container">
-        <header>
+        <header style="background: linear-gradient(135deg, #64748b 0%, #334155 100%);">
             <div class="header-content">
-                <h1>إدارة سكن العاملات</h1>
+                <h1>أرشيف العاملات</h1>
                 <div class="header-actions">
-                    <button id="bulkAddBtn" class="btn btn-primary"><i class="fas fa-plus-circle"></i> إضافة متعدة</button>
-                    <button id="bulkEditBtn" class="btn btn-warning" disabled><i class="fas fa-edit"></i> تعديل محدد</button>
-                    <button id="bulkDeleteBtn" class="btn btn-danger" disabled><i class="fas fa-trash"></i> حذف محدد</button>
-                    <button id="bulkArchiveBtn" class="btn btn-secondary" disabled><i class="fas fa-archive"></i> أرشفة المحدد</button>
-                    <a href="archive.php" class="btn btn-success"><i class="fas fa-box-open"></i> الأرشيف</a>
+                    <button id="bulkUnarchiveBtn" class="btn btn-primary" disabled><i class="fas fa-undo"></i> إلغاء أرشفة المحدد</button>
+                    <button id="bulkDeleteBtn" class="btn btn-danger" disabled><i class="fas fa-trash"></i> حذف نهائي</button>
+                    <a href="index.php" class="btn btn-success"><i class="fas fa-arrow-right"></i> العودة للرئيسية</a>
                     <button id="exportPdfBtn" class="btn btn-success"><i class="fas fa-file-pdf"></i> تصدير PDF</button>
                 </div>
             </div>
         </header>
 
         <div class="print-header" style="display: none;">
-            <h1 style="text-align: center; margin-bottom: 20px; border-bottom: 3px solid #000; padding-bottom: 10px;">تقرير بيانات سكن العاملات</h1>
+            <h1 style="text-align: center; margin-bottom: 20px; border-bottom: 3px solid #000; padding-bottom: 10px;">تقرير أرشيف سكن العاملات</h1>
             <div style="display: flex; justify-content: space-between; margin-bottom: 15px; font-weight: bold;">
                 <span>تاريخ التقرير: <?php echo date('Y-m-d'); ?></span>
-                <span>الفرع: الإدارة العامة</span>
+                <span>النوع: بيانات مؤرشفة</span>
             </div>
         </div>
 
         <section class="filters-section">
             <div class="search-box">
                 <i class="fas fa-search"></i>
-                <input type="text" id="globalSearch" placeholder="بحث شامل في جميع الأعمدة...">
+                <input type="text" id="globalSearch" placeholder="بحث في الأرشيف...">
             </div>
             <div class="filter-grid">
                 <select id="filterGuarantee">
@@ -112,41 +110,6 @@
         </main>
     </div>
 
-    <!-- Bulk Add Modal -->
-    <div id="addModal" class="modal">
-        <div class="modal-content large">
-            <div class="modal-header">
-                <h2>إضافة عاملات (نظام الصفين الذكي)</h2>
-                <span class="close">&times;</span>
-            </div>
-            <div class="modal-body">
-                <div id="addBody" class="worker-group-list"></div>
-                <div class="modal-actions">
-                    <button id="addRowBtn" class="btn btn-secondary"><i class="fas fa-plus"></i> إضافة عاملة جديدة</button>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button id="saveBulkAdd" class="btn btn-primary">حفظ الكل</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Bulk Edit Modal -->
-    <div id="editModal" class="modal">
-        <div class="modal-content large">
-            <div class="modal-header">
-                <h2>تعديل بيانات العاملات المختارة</h2>
-                <span class="close">&times;</span>
-            </div>
-            <div class="modal-body">
-                <div id="editBody" class="worker-group-list"></div>
-            </div>
-            <div class="modal-footer">
-                <button id="saveBulkEdit" class="btn btn-warning">حفظ التعديلات</button>
-            </div>
-        </div>
-    </div>
-
     <!-- Detail Modal -->
     <div id="detailModal" class="modal">
         <div class="modal-content detail-modal-content">
@@ -164,7 +127,7 @@
     </div>
 
     <div id="toastContainer" class="toast-container"></div>
-    <script>const PAGE_TYPE = 'main';</script>
+    <script>const PAGE_TYPE = 'archive';</script>
     <script src="assets/js/app.js"></script>
 </body>
 

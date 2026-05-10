@@ -5,14 +5,16 @@ require_once 'config.php';
 header('Content-Type: application/json');
 
 $action = $_GET['action'] ?? '';
+$is_archived = isset($_GET['archived']) && $_GET['archived'] == '1' ? 1 : 0;
 
 switch ($action) {
     case 'list':
         try {
-            $stmt = $pdo->query("SELECT *, 
+            $stmt = $pdo->prepare("SELECT *, 
                 DATEDIFF(CURRENT_DATE, entry_date) as days_in_ksa,
                 DATEDIFF(CURRENT_DATE, housing_entry_date) as days_in_housing 
-                FROM workers ORDER BY id DESC");
+                FROM workers WHERE is_archived = ? ORDER BY id DESC");
+            $stmt->execute([$is_archived]);
             echo json_encode($stmt->fetchAll());
         } catch (Exception $e) {
             echo json_encode(['error' => $e->getMessage()]);
@@ -28,8 +30,8 @@ switch ($action) {
 
         try {
             $pdo->beginTransaction();
-            $sql = "INSERT INTO workers (worker_name, passport, nationality, office, customer, national_id, guarantee_status, housing_location, entry_date, housing_entry_date, salary, status_description, action_type, ticket_info, settlement_status, financial_notes) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO workers (worker_name, passport, nationality, office, customer, national_id, guarantee_status, housing_location, entry_date, housing_entry_date, salary, status_description, action_type, ticket_info, settlement_status, financial_notes, is_archived) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $stmt = $pdo->prepare($sql);
 
             foreach ($data as $row) {
@@ -42,21 +44,21 @@ switch ($action) {
                     $row['national_id'] ?? '',
                     $row['guarantee_status'] ?? 'داخل الضمان',
                     $row['housing_location'] ?? 'الرياض',
-                    $row['entry_date'] ?: null,
-                    $row['housing_entry_date'] ?: null,
+                    ($row['entry_date'] && $row['entry_date'] !== '') ? $row['entry_date'] : null,
+                    ($row['housing_entry_date'] && $row['housing_entry_date'] !== '') ? $row['housing_entry_date'] : null,
                     $row['salary'] ?: 0,
                     $row['status_description'] ?? '',
                     $row['action_type'] ?? 'السكن',
                     $row['ticket_info'] ?? '',
                     $row['settlement_status'] ?? 'لم يتم الخصم',
-                    $row['financial_notes'] ?? ''
+                    $row['financial_notes'] ?? '',
+                    0 // Default not archived
                 ]);
             }
             $pdo->commit();
             echo json_encode(['success' => true]);
         } catch (Exception $e) {
-            if ($pdo->inTransaction())
-                $pdo->rollBack();
+            if ($pdo->inTransaction()) $pdo->rollBack();
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
         break;
@@ -104,8 +106,7 @@ switch ($action) {
             $pdo->commit();
             echo json_encode(['success' => true, 'affected_count' => $affectedCount]);
         } catch (Exception $e) {
-            if ($pdo->inTransaction())
-                $pdo->rollBack();
+            if ($pdo->inTransaction()) $pdo->rollBack();
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
         break;
@@ -126,6 +127,25 @@ switch ($action) {
             $placeholders = implode(',', array_fill(0, count($ids), '?'));
             $stmt = $pdo->prepare("DELETE FROM workers WHERE id IN ($placeholders)");
             $stmt->execute($ids);
+            echo json_encode(['success' => true]);
+        } catch (Exception $e) {
+            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+        }
+        break;
+
+    case 'bulk_archive':
+        $data = json_decode(file_get_contents('php://input'), true);
+        if (!$data || !isset($data['ids'])) {
+            echo json_encode(['success' => false, 'message' => 'No IDs provided']);
+            break;
+        }
+
+        try {
+            $ids = $data['ids'];
+            $status = $_GET['status'] ?? 1; // 1 to archive, 0 to unarchive
+            $placeholders = implode(',', array_fill(0, count($ids), '?'));
+            $stmt = $pdo->prepare("UPDATE workers SET is_archived = ? WHERE id IN ($placeholders)");
+            $stmt->execute(array_merge([$status], $ids));
             echo json_encode(['success' => true]);
         } catch (Exception $e) {
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
