@@ -34,6 +34,7 @@ switch ($action) {
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $stmt = $pdo->prepare($sql);
 
+            $count = 0;
             foreach ($data as $row) {
                 $stmt->execute([
                     $row['worker_name'] ?? '',
@@ -52,13 +53,15 @@ switch ($action) {
                     $row['ticket_info'] ?? '',
                     $row['settlement_status'] ?? 'لم يتم الخصم',
                     $row['financial_notes'] ?? '',
-                    0 // Default not archived
+                    $row['is_archived'] ?? 0
                 ]);
+                $count++;
             }
             $pdo->commit();
-            echo json_encode(['success' => true]);
+            echo json_encode(['success' => true, 'count' => $count]);
         } catch (Exception $e) {
-            if ($pdo->inTransaction()) $pdo->rollBack();
+            if ($pdo->inTransaction())
+                $pdo->rollBack();
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
         break;
@@ -106,7 +109,8 @@ switch ($action) {
             $pdo->commit();
             echo json_encode(['success' => true, 'affected_count' => $affectedCount]);
         } catch (Exception $e) {
-            if ($pdo->inTransaction()) $pdo->rollBack();
+            if ($pdo->inTransaction())
+                $pdo->rollBack();
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
         break;
@@ -146,6 +150,82 @@ switch ($action) {
             $placeholders = implode(',', array_fill(0, count($ids), '?'));
             $stmt = $pdo->prepare("UPDATE workers SET is_archived = ? WHERE id IN ($placeholders)");
             $stmt->execute(array_merge([$status], $ids));
+            echo json_encode(['success' => true]);
+        } catch (Exception $e) {
+            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+        }
+        break;
+
+    // Office Management
+    case 'list_offices':
+        try {
+            $stmt = $pdo->query("SELECT * FROM offices ORDER BY id DESC");
+            echo json_encode($stmt->fetchAll());
+        } catch (Exception $e) {
+            echo json_encode(['error' => $e->getMessage()]);
+        }
+        break;
+
+    case 'bulk_add_offices':
+        $data = json_decode(file_get_contents('php://input'), true);
+        if (!$data || !is_array($data)) {
+            echo json_encode(['success' => false, 'message' => 'No data provided']);
+            break;
+        }
+
+        try {
+            $pdo->beginTransaction();
+            $stmt = $pdo->prepare("INSERT INTO offices (name) VALUES (?)");
+            foreach ($data as $row) {
+                if (!empty($row['name'])) {
+                    $stmt->execute([$row['name']]);
+                }
+            }
+            $pdo->commit();
+            echo json_encode(['success' => true]);
+        } catch (Exception $e) {
+            if ($pdo->inTransaction())
+                $pdo->rollBack();
+            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+        }
+        break;
+
+    case 'bulk_update_offices':
+        $data = json_decode(file_get_contents('php://input'), true);
+        if (!$data || !is_array($data)) {
+            echo json_encode(['success' => false, 'message' => 'No data provided']);
+            break;
+        }
+
+        try {
+            $pdo->beginTransaction();
+            $stmt = $pdo->prepare("UPDATE offices SET name = ? WHERE id = ?");
+            foreach ($data as $row) {
+                if (!empty($row['name']) && !empty($row['id'])) {
+                    $stmt->execute([$row['name'], $row['id']]);
+                }
+            }
+            $pdo->commit();
+            echo json_encode(['success' => true]);
+        } catch (Exception $e) {
+            if ($pdo->inTransaction())
+                $pdo->rollBack();
+            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+        }
+        break;
+
+    case 'bulk_delete_offices':
+        $data = json_decode(file_get_contents('php://input'), true);
+        if (!$data || !isset($data['ids'])) {
+            echo json_encode(['success' => false, 'message' => 'No IDs provided']);
+            break;
+        }
+
+        try {
+            $ids = $data['ids'];
+            $placeholders = implode(',', array_fill(0, count($ids), '?'));
+            $stmt = $pdo->prepare("DELETE FROM offices WHERE id IN ($placeholders)");
+            $stmt->execute($ids);
             echo json_encode(['success' => true]);
         } catch (Exception $e) {
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);

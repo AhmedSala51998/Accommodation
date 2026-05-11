@@ -16,8 +16,12 @@
             <div class="header-content">
                 <h1>أرشيف العاملات</h1>
                 <div class="header-actions">
-                    <button id="bulkUnarchiveBtn" class="btn btn-primary" disabled><i class="fas fa-undo"></i> إلغاء أرشفة المحدد</button>
-                    <button id="bulkDeleteBtn" class="btn btn-danger" disabled><i class="fas fa-trash"></i> حذف نهائي</button>
+                    <button id="bulkEditBtn" class="btn btn-warning" disabled><i class="fas fa-edit"></i> تعديل
+                        محدد</button>
+                    <button id="bulkUnarchiveBtn" class="btn btn-primary" disabled><i class="fas fa-undo"></i> إلغاء
+                        أرشفة المحدد</button>
+                    <button id="bulkDeleteBtn" class="btn btn-danger" disabled><i class="fas fa-trash"></i> حذف
+                        نهائي</button>
                     <a href="index.php" class="btn btn-success"><i class="fas fa-arrow-right"></i> العودة للرئيسية</a>
                     <button id="exportPdfBtn" class="btn btn-success"><i class="fas fa-file-pdf"></i> تصدير PDF</button>
                 </div>
@@ -25,9 +29,12 @@
         </header>
 
         <div class="print-header" style="display: none;">
-            <h1 style="text-align: center; margin-bottom: 20px; border-bottom: 3px solid #000; padding-bottom: 10px;">تقرير أرشيف سكن العاملات</h1>
+            <h1 style="text-align: center; margin-bottom: 20px; border-bottom: 3px solid #000; padding-bottom: 10px;">
+                تقرير أرشيف سكن العاملات</h1>
             <div style="display: flex; justify-content: space-between; margin-bottom: 15px; font-weight: bold;">
-                <span>تاريخ التقرير: <?php echo date('Y-m-d'); ?></span>
+                <span>تاريخ التقرير:
+                    <?php echo date('Y-m-d'); ?>
+                </span>
                 <span>النوع: بيانات مؤرشفة</span>
             </div>
         </div>
@@ -59,6 +66,10 @@
                     <option value="الرياض">الرياض</option>
                     <option value="جدة">جدة</option>
                     <option value="ينبع">ينبع</option>
+                </select>
+                <select id="filterOffice">
+                    <option value="">كل المكاتب</option>
+                    <!-- Populated via JS -->
                 </select>
                 <select id="filterAction">
                     <option value="">كل الإجراءات</option>
@@ -93,9 +104,9 @@
                         <th>الضمان</th>
                         <th>الموقع</th>
                         <th>دخول المملكة</th>
-                        <th>أيام (In KSA)</th>
+                        <th>(In KSA)</th>
                         <th>دخول الإيواء</th>
-                        <th>أيام (In Housing)</th>
+                        <th>(In Housing)</th>
                         <th>الراتب</th>
                         <th>الإجراء</th>
                         <th>التذكرة</th>
@@ -110,6 +121,22 @@
         </main>
     </div>
 
+    <!-- Bulk Edit Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h2>تعديل بيانات العاملات المؤرشفة</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="editBody" class="worker-group-list"></div>
+            </div>
+            <div class="modal-footer">
+                <button id="saveBulkEdit" class="btn btn-warning">حفظ التعديلات</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Detail Modal -->
     <div id="detailModal" class="modal">
         <div class="modal-content detail-modal-content">
@@ -121,7 +148,8 @@
                 <p id="detailContent"></p>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="document.getElementById('detailModal').style.display='none'">إغلاق</button>
+                <button class="btn btn-secondary"
+                    onclick="document.getElementById('detailModal').style.display='none'">إغلاق</button>
             </div>
         </div>
     </div>
