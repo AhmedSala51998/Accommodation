@@ -24,9 +24,15 @@ const excelImporter = {
     // 3. Reset State
     reset: function () {
         this.currentData = [];
-        document.getElementById('excelFileInput').value = '';
+        const fileInput = document.getElementById('excelFileInput');
+        if (fileInput) fileInput.value = '';
+        
         document.getElementById('excelPreviewSection').style.display = 'none';
         document.getElementById('excelDropZone').style.display = 'flex';
+        
+        const showAllBtn = document.getElementById('showAllPreviewBtn');
+        if (showAllBtn) showAllBtn.style.display = 'none';
+
         const btn = document.getElementById('confirmExcelImportBtn');
         if (btn) {
             btn.disabled = true;

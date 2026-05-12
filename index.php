@@ -250,9 +250,13 @@
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
                     <p style="font-weight:800; color:#4361ee; margin:0;">معاينة البيانات (تم قراءة <span
                             id="excelRowCount">0</span> سجل):</p>
-                    <button id="showAllPreviewBtn" class="btn btn-secondary"
-                        style="display:none; padding:5px 15px; font-size:12px;"
-                        onclick="excelImporter.showFullPreview()">عرض كل السجلات</button>
+                    <div style="display:flex; gap:10px;">
+                        <button id="showAllPreviewBtn" class="btn btn-secondary"
+                            style="display:none; padding:5px 15px; font-size:12px;"
+                            onclick="excelImporter.showFullPreview()">عرض كل السجلات</button>
+                        <button class="btn btn-danger" style="padding:5px 15px; font-size:12px;" 
+                            onclick="excelImporter.reset()">حذف الملف ورفع غيره</button>
+                    </div>
                 </div>
                 <div class="excel-preview-table-wrapper">
                     <table class="excel-preview-table">
