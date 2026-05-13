@@ -359,7 +359,7 @@
     <script>const PAGE_TYPE = 'main';</script>
     <script src="assets/js/app.js"></script>
     <!-- Standalone Excel Script (Force Refresh) -->
-    <script src="assets/js/excel_importer.js?v=1.1"></script>
+    <script src="assets/js/excel_importer.js?v=1.2"></script>
 </body>
 
 </html>

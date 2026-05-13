@@ -99,9 +99,18 @@ const excelImporter = {
     // Render helper for rows
     renderTableRows: function (rows, headers) {
         const body = document.getElementById('excelPreviewBody');
-        body.innerHTML = rows.map(row => `
-            <tr>${headers.map(h => `<td>${row[h] || ''}</td>`).join('')}</tr>
-        `).join('');
+        body.innerHTML = rows.map(row => {
+            const cells = headers.map(h => {
+                let val = row[h] || '';
+                // If it's a date column and the value is a number (Excel date), format it
+                const dateCols = ['دخول المملكة', 'دخول الإيواء', 'تاريخ الدخول', 'تاريخ دخول الإيواء'];
+                if (dateCols.includes(h) && typeof val === 'number') {
+                    val = this.formatDate(val);
+                }
+                return `<td>${val}</td>`;
+            }).join('');
+            return `<tr>${cells}</tr>`;
+        }).join('');
     },
 
     // Show all records in preview
