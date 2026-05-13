@@ -213,18 +213,144 @@ const excelImporter = {
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, "Sample");
         XLSX.writeFile(workbook, "Worker_Import_Sample.xlsx");
+    },
+
+    // 8. Full Office Import Logic (Mirroring Worker Import)
+    openOfficeModal: function() {
+        const modal = document.getElementById('officeImportModal');
+        if (modal) {
+            this.resetOfficeImport();
+            modal.style.display = 'block';
+        }
+    },
+
+    closeOfficeModal: function() {
+        document.getElementById('officeImportModal').style.display = 'none';
+    },
+
+    resetOfficeImport: function() {
+        this.currentOfficeData = [];
+        const fileInput = document.getElementById('officeExcelFileInput');
+        if (fileInput) fileInput.value = '';
+        
+        document.getElementById('officePreviewSection').style.display = 'none';
+        document.getElementById('officeDropZone').style.display = 'flex';
+        
+        const btn = document.getElementById('confirmOfficeImportBtn');
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = 'تأكيد وحفظ المكاتب';
+        }
+    },
+
+    handleOfficeFile: function(file) {
+        if (!file || !file.name.match(/\.(xlsx|xls)$/)) {
+            showToast('الرجاء اختيار ملف Excel صحيح (.xlsx أو .xls)', 'error');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                const jsonData = XLSX.utils.sheet_to_json(firstSheet);
+
+                if (jsonData.length === 0) {
+                    showToast('الملف المختار فارغ!', 'error');
+                    return;
+                }
+
+                this.currentOfficeData = jsonData.map(row => ({
+                    name: row['اسم المكتب'] || row['المكتب'] || ''
+                })).filter(o => o.name !== '');
+
+                if (this.currentOfficeData.length === 0) {
+                    showToast('لم يتم العثور على مكاتب (تأكد من وجود هيدر "اسم المكتب")', 'error');
+                    return;
+                }
+
+                this.renderOfficePreview();
+            } catch (err) {
+                showToast('حدث خطأ أثناء معالجة ملف المكاتب', 'error');
+            }
+        };
+        reader.readAsArrayBuffer(file);
+    },
+
+    renderOfficePreview: function() {
+        const body = document.getElementById('officePreviewBody');
+        const countEl = document.getElementById('officeRowCount');
+        const processBtn = document.getElementById('confirmOfficeImportBtn');
+
+        body.innerHTML = this.currentOfficeData.map((o, index) => `
+            <tr>
+                <td>${index + 1}</td>
+                <td>${o.name}</td>
+            </tr>
+        `).join('');
+
+        countEl.innerText = this.currentOfficeData.length;
+        document.getElementById('officePreviewSection').style.display = 'block';
+        document.getElementById('officeDropZone').style.display = 'none';
+        processBtn.disabled = false;
+    },
+
+    startOfficeImport: async function() {
+        if (!this.currentOfficeData || this.currentOfficeData.length === 0) return;
+
+        const processBtn = document.getElementById('confirmOfficeImportBtn');
+        processBtn.disabled = true;
+        processBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الحفظ...';
+
+        try {
+            const response = await fetch('api.php?action=bulk_add_offices', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(this.currentOfficeData)
+            });
+            const result = await response.json();
+
+            if (result.success) {
+                this.closeOfficeModal();
+                showToast(`تم استيراد ${this.currentOfficeData.length} مكتب بنجاح!`, 'add');
+                if (typeof fetchOffices === 'function') fetchOffices();
+            } else {
+                showToast('فشل الاستيراد: ' + result.message, 'error');
+            }
+        } catch (err) {
+            showToast('حدث خطأ في الاتصال بالسيرفر', 'error');
+        } finally {
+            processBtn.disabled = false;
+            processBtn.innerHTML = 'تأكيد وحفظ المكاتب';
+        }
+    },
+
+    downloadOfficeSample: function() {
+        const sampleData = [{ "اسم المكتب": "مكتب استقدام مثال 1" }, { "اسم المكتب": "مكتب استقدام مثال 2" }];
+        const worksheet = XLSX.utils.json_to_sheet(sampleData);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Offices");
+        XLSX.writeFile(workbook, "Offices_Import_Sample.xlsx");
     }
 };
 
 // Initialize Drag & Drop events
 document.addEventListener('DOMContentLoaded', () => {
+    // Worker Drop Zone
     const dropZone = document.getElementById('excelDropZone');
     if (dropZone) {
         dropZone.ondragover = (e) => { e.preventDefault(); dropZone.style.borderColor = '#4361ee'; dropZone.style.background = '#f0f7ff'; };
         dropZone.ondragleave = () => { dropZone.style.borderColor = '#cbd5e1'; dropZone.style.background = '#f8fafc'; };
-        dropZone.ondrop = (e) => {
-            e.preventDefault();
-            excelImporter.handleFile(e.dataTransfer.files[0]);
-        };
+        dropZone.ondrop = (e) => { e.preventDefault(); excelImporter.handleFile(e.dataTransfer.files[0]); };
+    }
+
+    // Office Drop Zone
+    const officeDropZone = document.getElementById('officeDropZone');
+    if (officeDropZone) {
+        officeDropZone.ondragover = (e) => { e.preventDefault(); officeDropZone.style.borderColor = '#4361ee'; officeDropZone.style.background = '#f0f7ff'; };
+        officeDropZone.ondragleave = () => { officeDropZone.style.borderColor = '#cbd5e1'; officeDropZone.style.background = '#f8fafc'; };
+        officeDropZone.ondrop = (e) => { e.preventDefault(); excelImporter.handleOfficeFile(e.dataTransfer.files[0]); };
     }
 });
