@@ -254,7 +254,7 @@
                         <button id="showAllPreviewBtn" class="btn btn-secondary"
                             style="display:none; padding:5px 15px; font-size:12px;"
                             onclick="excelImporter.showFullPreview()">عرض كل السجلات</button>
-                        <button class="btn btn-danger" style="padding:5px 15px; font-size:12px;" 
+                        <button class="btn btn-danger" style="padding:5px 15px; font-size:12px;"
                             onclick="excelImporter.reset()">حذف الملف ورفع غيره</button>
                     </div>
                 </div>
@@ -317,7 +317,7 @@
                     <button class="btn btn-success" onclick="excelImporter.openOfficeModal()">
                         <i class="fas fa-file-excel"></i> استيراد مكاتب من Excel
                     </button>
-                    
+
                     <button id="bulkEditOfficesBtn" class="btn btn-warning" disabled>تعديل المحدد</button>
                     <button id="bulkDeleteOfficesBtn" class="btn btn-danger" disabled>حذف المحدد</button>
                     <div
@@ -335,38 +335,52 @@
     <!-- Standalone Office Import Modal -->
     <div id="officeImportModal" class="excel-modal">
         <div class="excel-modal-content" style="max-width: 600px;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; border-bottom:1px solid #eee; padding-bottom:15px;">
+            <div
+                style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; border-bottom:1px solid #eee; padding-bottom:15px;">
                 <h2 style="margin:0;"><i class="fas fa-building" style="color:#10b981;"></i> استيراد مكاتب من Excel</h2>
                 <div style="display:flex; gap:10px;">
-                    <button class="btn btn-secondary" style="padding:5px 15px; font-size:12px; background:#e2e8f0;" onclick="excelImporter.downloadOfficeSample()">
+                    <button class="btn btn-secondary" style="padding:5px 15px; font-size:12px; background:#e2e8f0;"
+                        onclick="excelImporter.downloadOfficeSample()">
                         <i class="fas fa-download"></i> نموذج المكاتب
                     </button>
-                    <span style="font-size:30px; cursor:pointer;" onclick="excelImporter.closeOfficeModal()">&times;</span>
+                    <span style="font-size:30px; cursor:pointer;"
+                        onclick="excelImporter.closeOfficeModal()">&times;</span>
                 </div>
             </div>
 
-            <div id="officeDropZone" class="excel-upload-zone" onclick="document.getElementById('officeExcelFileInput').click()">
+            <div id="officeDropZone" class="excel-upload-zone"
+                onclick="document.getElementById('officeExcelFileInput').click()">
                 <i class="fas fa-cloud-upload-alt" style="font-size:60px; color:#4361ee;"></i>
                 <p style="font-size:16px; font-weight:bold; margin-top:10px;">اسحب ملف المكاتب هنا أو اضغط للاختيار</p>
-                <input type="file" id="officeExcelFileInput" accept=".xlsx, .xls" style="display:none;" onchange="excelImporter.handleOfficeFile(this.files[0])">
+                <input type="file" id="officeExcelFileInput" accept=".xlsx, .xls" style="display:none;"
+                    onchange="excelImporter.handleOfficeFile(this.files[0])">
             </div>
 
             <div id="officePreviewSection" style="display:none; margin-top:20px;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                    <p style="font-weight:800; color:#4361ee; margin:0;">معاينة المكاتب (<span id="officeRowCount">0</span> مكتب):</p>
-                    <button class="btn btn-danger" style="padding:5px 15px; font-size:12px;" onclick="excelImporter.resetOfficeImport()">حذف</button>
+                    <p style="font-weight:800; color:#4361ee; margin:0;">معاينة المكاتب (<span
+                            id="officeRowCount">0</span> مكتب):</p>
+                    <button class="btn btn-danger" style="padding:5px 15px; font-size:12px;"
+                        onclick="excelImporter.resetOfficeImport()">حذف</button>
                 </div>
                 <div class="excel-preview-table-wrapper">
                     <table class="excel-preview-table">
-                        <thead><tr><th>#</th><th>اسم المكتب</th></tr></thead>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>اسم المكتب</th>
+                            </tr>
+                        </thead>
                         <tbody id="officePreviewBody"></tbody>
                     </table>
                 </div>
             </div>
 
-            <div style="margin-top:25px; border-top:1px solid #eee; padding-top:20px; display:flex; justify-content:flex-end; gap:10px;">
+            <div
+                style="margin-top:25px; border-top:1px solid #eee; padding-top:20px; display:flex; justify-content:flex-end; gap:10px;">
                 <button class="btn btn-secondary" onclick="excelImporter.closeOfficeModal()">إلغاء</button>
-                <button id="confirmOfficeImportBtn" class="btn btn-primary" disabled onclick="excelImporter.startOfficeImport()">تأكيد وحفظ المكاتب</button>
+                <button id="confirmOfficeImportBtn" class="btn btn-primary" disabled
+                    onclick="excelImporter.startOfficeImport()">تأكيد وحفظ المكاتب</button>
             </div>
         </div>
     </div>
