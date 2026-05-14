@@ -25,6 +25,13 @@
                     <button id="bulkDeleteBtn" class="btn btn-danger" disabled><i class="fas fa-trash"></i> حذف
                         نهائي</button>
                     <a href="index.php" class="btn btn-success"><i class="fas fa-arrow-right"></i> العودة للرئيسية</a>
+                    <div class="range-selector" style="display: flex; align-items: center; gap: 4px; background: rgba(255,255,255,0.15); padding: 4px 8px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.2);">
+                        <span style="font-size: 11px; font-weight: bold; color: white;">من:</span>
+                        <input type="number" id="rangeFrom" min="1" style="width: 45px; height: 28px; border-radius: 6px; border: none; text-align: center; font-size: 12px; font-weight: bold;">
+                        <span style="font-size: 11px; font-weight: bold; color: white;">إلى:</span>
+                        <input type="number" id="rangeTo" min="1" style="width: 45px; height: 28px; border-radius: 6px; border: none; text-align: center; font-size: 12px; font-weight: bold;">
+                        <button id="applyRangeSelect" style="display:none;"></button>
+                    </div>
                     <button id="exportPdfBtn" class="btn btn-success"><i class="fas fa-file-pdf"></i> تصدير PDF</button>
                 </div>
             </div>

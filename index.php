@@ -122,6 +122,13 @@
                     <button id="bulkArchiveBtn" class="btn btn-secondary" disabled><i class="fas fa-archive"></i> أرشفة
                         المحدد</button>
                     <a href="archive.php" class="btn btn-success"><i class="fas fa-box-open"></i> الأرشيف</a>
+                    <div class="range-selector" style="display: flex; align-items: center; gap: 4px; background: rgba(255,255,255,0.15); padding: 4px 8px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.2);">
+                        <span style="font-size: 11px; font-weight: bold; color: white;">من:</span>
+                        <input type="number" id="rangeFrom" min="1" style="width: 45px; height: 28px; border-radius: 6px; border: none; text-align: center; font-size: 12px; font-weight: bold;">
+                        <span style="font-size: 11px; font-weight: bold; color: white;">إلى:</span>
+                        <input type="number" id="rangeTo" min="1" style="width: 45px; height: 28px; border-radius: 6px; border: none; text-align: center; font-size: 12px; font-weight: bold;">
+                        <button id="applyRangeSelect" style="display:none;"></button>
+                    </div>
                     <button id="exportPdfBtn" class="btn btn-success"><i class="fas fa-file-pdf"></i> تصدير PDF</button>
                 </div>
             </div>
@@ -328,7 +335,14 @@
                         <button id="bulkEditOfficesBtn" class="btn btn-warning" disabled style="height: 42px; padding: 0 15px; font-size: 13px; white-space: nowrap;"><i class="fas fa-edit"></i> تعديل</button>
                         <button id="bulkDeleteOfficesBtn" class="btn btn-danger" disabled style="height: 42px; padding: 0 15px; font-size: 13px; white-space: nowrap;"><i class="fas fa-trash"></i> حذف</button>
                         
-                        <div style="display: flex; align-items: center; gap: 5px; padding-right: 15px; border-right: 2px solid #e2e8f0; height: 30px;">
+                        <div class="range-selector" style="display: flex; align-items: center; gap: 5px; background: white; padding: 2px 8px; border-radius: 8px; border: 1px solid #cbd5e1; margin-right: 5px;">
+                            <span style="font-size: 11px; font-weight: bold; color: #64748b;">من:</span>
+                            <input type="number" id="officeRangeFrom" min="1" style="width: 40px; height: 28px; border-radius: 5px; border: 1px solid #cbd5e1; text-align: center; font-size: 11px;">
+                            <span style="font-size: 11px; font-weight: bold; color: #64748b;">إلى:</span>
+                            <input type="number" id="officeRangeTo" min="1" style="width: 40px; height: 28px; border-radius: 5px; border: 1px solid #cbd5e1; text-align: center; font-size: 11px;">
+                        </div>
+
+                        <div style="display: flex; align-items: center; gap: 5px; padding-right: 10px; border-right: 2px solid #e2e8f0; height: 30px;">
                             <input type="checkbox" id="selectAllOffices" style="width: 16px; height: 16px; cursor: pointer;">
                             <label for="selectAllOffices" style="font-weight: bold; cursor: pointer; font-size: 12px; white-space: nowrap;">الكل</label>
                         </div>

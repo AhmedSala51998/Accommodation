@@ -105,8 +105,9 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const renderOfficesCards = () => {
-        officesBody.innerHTML = allOffices.map(office => `
+        officesBody.innerHTML = allOffices.map((office, index) => `
             <div class="office-card" onclick="toggleOfficeCard(this)">
+                <div style="position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.05); padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; color: #64748b;">#${index + 1}</div>
                 <input type="checkbox" class="office-select" value="${office.id}" onclick="event.stopPropagation(); updateOfficeSelectionState();">
                 <div class="office-icon"><i class="fas fa-building"></i></div>
                 <div class="office-name">${office.name}</div>
@@ -142,6 +143,61 @@ document.addEventListener('DOMContentLoaded', () => {
                 card.style.background = 'var(--office-card-gradient)';
             }
         });
+        updateOfficeRangeInputs();
+    };
+
+    const updateOfficeRangeInputs = () => {
+        const checked = Array.from(document.querySelectorAll('.office-select')).map((cb, i) => cb.checked ? i + 1 : null).filter(n => n !== null);
+        const rangeFrom = document.getElementById('officeRangeFrom');
+        const rangeTo = document.getElementById('officeRangeTo');
+        
+        if (!rangeFrom || !rangeTo) return;
+
+        if (checked.length > 0) {
+            rangeFrom.value = Math.min(...checked);
+            rangeTo.value = Math.max(...checked);
+        } else {
+            rangeFrom.value = '';
+            rangeTo.value = '';
+        }
+    };
+
+    // Office Range Selection Logic (Automatic)
+    const handleOfficeRangeSelect = () => {
+        let from = parseInt(document.getElementById('officeRangeFrom').value);
+        let to = parseInt(document.getElementById('officeRangeTo').value);
+
+        if (isNaN(from) || isNaN(to) || from < 1 || from > to) return;
+
+        const checkboxes = document.querySelectorAll('.office-select');
+        checkboxes.forEach((cb, index) => {
+            const num = index + 1;
+            cb.checked = (num >= from && num <= to);
+        });
+        updateOfficeSelectionState();
+    };
+
+    if (document.getElementById('officeRangeFrom')) {
+        document.getElementById('officeRangeFrom').addEventListener('input', handleOfficeRangeSelect);
+        document.getElementById('officeRangeTo').addEventListener('input', handleOfficeRangeSelect);
+    }
+
+    const updateRangeInputs = () => {
+        const checked = Array.from(document.querySelectorAll('.row-select')).map((cb, i) => cb.checked ? i + 1 : null).filter(n => n !== null);
+        const rangeFrom = document.getElementById('rangeFrom');
+        const rangeTo = document.getElementById('rangeTo');
+        
+        if (!rangeFrom || !rangeTo) return;
+
+        if (checked.length > 0) {
+            const min = Math.min(...checked);
+            const max = Math.max(...checked);
+            rangeFrom.value = min;
+            rangeTo.value = max;
+        } else {
+            rangeFrom.value = '';
+            rangeTo.value = '';
+        }
     };
 
     // Office Card Search Logic (Global Listener)
@@ -167,6 +223,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Render Main Table
+    let lastChecked = null;
     const renderTable = (data) => {
         workerBody.innerHTML = data.map((row, index) => `
             <tr>
@@ -199,8 +256,20 @@ document.addEventListener('DOMContentLoaded', () => {
             </tr>
         `).join('');
 
-        document.querySelectorAll('.row-select').forEach(cb => {
-            cb.addEventListener('change', updateSelectionState);
+        const checkboxes = document.querySelectorAll('.row-select');
+        checkboxes.forEach((cb, index) => {
+            cb.onclick = (e) => {
+                if (e.shiftKey && lastChecked !== null) {
+                    let start = Math.min(index, lastChecked);
+                    let end = Math.max(index, lastChecked);
+                    for (let i = start; i <= end; i++) {
+                        checkboxes[i].checked = checkboxes[lastChecked].checked;
+                    }
+                }
+                lastChecked = index;
+                updateSelectionState();
+                updateRangeInputs();
+            };
         });
         updateSelectionState();
     };
@@ -212,6 +281,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (bulkArchiveBtn) bulkArchiveBtn.disabled = selectedCount === 0;
         if (bulkUnarchiveBtn) bulkUnarchiveBtn.disabled = selectedCount === 0;
         document.getElementById('selectAll').checked = selectedCount > 0 && selectedCount === document.querySelectorAll('.row-select').length;
+        updateRangeInputs();
     };
 
     document.getElementById('selectAll').addEventListener('change', (e) => {
@@ -653,10 +723,54 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
-    // PDF Export
-    document.getElementById('exportPdfBtn').onclick = () => {
-        window.print();
+    // Range Selection Logic (Automatic & Validated)
+    const handleRangeSelect = () => {
+        let from = parseInt(document.getElementById('rangeFrom').value);
+        let to = parseInt(document.getElementById('rangeTo').value);
+
+        if (isNaN(from) || isNaN(to) || from < 1 || from > to) {
+            // If invalid, we don't clear or select anything automatically to avoid confusion
+            return;
+        }
+
+        const checkboxes = document.querySelectorAll('.row-select');
+        checkboxes.forEach((cb, index) => {
+            const rowNum = index + 1;
+            cb.checked = (rowNum >= from && rowNum <= to);
+        });
+        updateSelectionState();
     };
+
+    if (document.getElementById('rangeFrom')) {
+        document.getElementById('rangeFrom').addEventListener('input', handleRangeSelect);
+        document.getElementById('rangeTo').addEventListener('input', handleRangeSelect);
+    }
+
+    // PDF Export (Smart Filtered)
+    if (document.getElementById('exportPdfBtn')) {
+        document.getElementById('exportPdfBtn').onclick = () => {
+            const selected = document.querySelectorAll('.row-select:checked');
+            
+            if (selected.length > 0) {
+                // Hide unselected rows
+                document.querySelectorAll('.row-select').forEach(cb => {
+                    if (!cb.checked) {
+                        cb.closest('tr').classList.add('hide-for-print');
+                    }
+                });
+                
+                window.print();
+                
+                // Restore rows immediately after print trigger
+                document.querySelectorAll('.hide-for-print').forEach(tr => {
+                    tr.classList.remove('hide-for-print');
+                });
+            } else {
+                // No selection, print everything as normal
+                window.print();
+            }
+        };
+    }
 
     fetchWorkers();
     fetchOffices();
