@@ -126,6 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const selectedCount = document.querySelectorAll('.office-select:checked').length;
         if (bulkEditOfficesBtn) bulkEditOfficesBtn.disabled = selectedCount === 0;
         if (bulkDeleteOfficesBtn) bulkDeleteOfficesBtn.disabled = selectedCount === 0;
+        
         const selectAllOffices = document.getElementById('selectAllOffices');
         if (selectAllOffices) {
             selectAllOffices.checked = selectedCount > 0 && selectedCount === document.querySelectorAll('.office-select').length;
@@ -142,6 +143,19 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     };
+
+    // Office Card Search Logic (Global Listener)
+    $(document).on('input', '#officeSearchInput', function() {
+        const term = $(this).val().toLowerCase();
+        $('.office-card').each(function() {
+            const name = $(this).find('.office-name').text().toLowerCase();
+            if (name.includes(term)) {
+                $(this).show().css('display', 'flex');
+            } else {
+                $(this).hide();
+            }
+        });
+    });
 
     if (document.getElementById('selectAllOffices')) {
         document.getElementById('selectAllOffices').addEventListener('change', (e) => {
