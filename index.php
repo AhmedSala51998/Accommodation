@@ -90,11 +90,13 @@
             font-weight: 800;
         }
 
-        .excel-preview-table td {
-            padding: 8px;
-            border: 1px solid #e2e8f0;
-            text-align: center;
-            color: #475569;
+        .excel-preview-table td { padding: 8px; border: 1px solid #e2e8f0; text-align: center; color: #475569; }
+
+        /* Focus effect for office search */
+        .search-box:focus-within {
+            border-color: #4361ee !important;
+            box-shadow: 0 0 0 4px rgba(67, 97, 238, 0.15) !important;
+            transform: translateY(-1px);
         }
     </style>
 </head>
@@ -309,22 +311,25 @@
             <div class="modal-header">
                 <h2><i class="fas fa-building"></i> إدارة المكاتب</h2><span class="close">&times;</span>
             </div>
-            <div class="modal-body">
-                <div class="header-actions"
-                    style="margin-bottom: 30px; justify-content: center; padding: 20px; background: #f8fafc; border-radius: 16px;">
-                    <button id="showAddOfficesBtn" class="btn btn-primary">إضافة مكتب جديد</button>
-                    <!-- Import Offices Button -->
-                    <button class="btn btn-success" onclick="excelImporter.openOfficeModal()">
-                        <i class="fas fa-file-excel"></i> استيراد مكاتب من Excel
-                    </button>
+            <div class="modal-body" style="padding: 20px 30px;">
+                <div style="padding: 0 10px; margin-bottom: 25px;">
+                    <div class="header-actions"
+                        style="display: flex; align-items: center; justify-content: space-between; padding: 12px 20px; background: #f1f5f9; border-radius: 12px; gap: 15px; border: 1px solid #e2e8f0; flex-wrap: nowrap; width: 100%; margin: 0;">
+                        
+                        <div class="search-box" style="flex: 1; min-width: 180px; margin: 0; background: white; border: 2px solid #cbd5e1; border-radius: 10px; height: 40px; position: relative;">
+                            <i class="fas fa-search" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: #64748b; font-size: 14px;"></i>
+                            <input type="text" id="officeSearchInput" placeholder="بحث عن مكتب..." style="border: none; outline: none; padding: 0 45px 0 15px; width: 100%; height: 100%; font-size: 13px; font-weight: 600; color: #1e293b; background: transparent; text-align: right;">
+                        </div>
 
-                    <button id="bulkEditOfficesBtn" class="btn btn-warning" disabled>تعديل المحدد</button>
-                    <button id="bulkDeleteOfficesBtn" class="btn btn-danger" disabled>حذف المحدد</button>
-                    <div
-                        style="display: flex; align-items: center; gap: 8px; margin-right: 20px; padding-right: 20px; border-right: 2px solid #e2e8f0;">
-                        <input type="checkbox" id="selectAllOffices"
-                            style="width: 18px; height: 18px; cursor: pointer;">
-                        <label for="selectAllOffices" style="font-weight: bold; cursor: pointer;">تحديد الكل</label>
+                        <button id="showAddOfficesBtn" class="btn btn-primary" style="height: 42px; padding: 0 15px; font-size: 13px; white-space: nowrap;"><i class="fas fa-plus"></i> إضافة</button>
+                        <button class="btn btn-success" onclick="excelImporter.openOfficeModal()" style="height: 42px; padding: 0 15px; font-size: 13px; white-space: nowrap;"><i class="fas fa-file-excel"></i> استيراد</button>
+                        <button id="bulkEditOfficesBtn" class="btn btn-warning" disabled style="height: 42px; padding: 0 15px; font-size: 13px; white-space: nowrap;"><i class="fas fa-edit"></i> تعديل</button>
+                        <button id="bulkDeleteOfficesBtn" class="btn btn-danger" disabled style="height: 42px; padding: 0 15px; font-size: 13px; white-space: nowrap;"><i class="fas fa-trash"></i> حذف</button>
+                        
+                        <div style="display: flex; align-items: center; gap: 5px; padding-right: 15px; border-right: 2px solid #e2e8f0; height: 30px;">
+                            <input type="checkbox" id="selectAllOffices" style="width: 16px; height: 16px; cursor: pointer;">
+                            <label for="selectAllOffices" style="font-weight: bold; cursor: pointer; font-size: 12px; white-space: nowrap;">الكل</label>
+                        </div>
                     </div>
                 </div>
                 <div id="officesBody" class="offices-grid"></div>
