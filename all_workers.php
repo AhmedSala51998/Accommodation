@@ -131,6 +131,7 @@
                         <input type="number" id="rangeTo" min="1" style="width: 45px; height: 28px; border-radius: 6px; border: none; text-align: center; font-size: 12px; font-weight: bold;">
                         <button id="applyRangeSelect" style="display:none;"></button>
                     </div>
+                    <button id="exportExcelBtn" class="btn btn-success"><i class="fas fa-file-excel"></i> تصدير Excel</button>
                     <button id="exportPdfBtn" class="btn btn-success"><i class="fas fa-file-pdf"></i> تصدير PDF</button>
                 </div>
             </div>

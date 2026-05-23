@@ -464,7 +464,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     <div class="form-row">
                         <div class="field"><label>دخول المملكة</label><input type="date" class="edit-entry" value="${w.entry_date || ''}" required></div>
-                        <div class="field"><label>دخول الإيواء</label><input type="date" class="edit-housing-date" value="${w.housing_entry_date || ''}" required></div>
+                        <div class="field housing-date-field" style="display: ${w.action_type === 'هروب' ? 'none' : 'block'};"><label>دخول الإيواء</label><input type="date" class="edit-housing-date" value="${w.housing_entry_date || ''}" ${w.action_type === 'هروب' ? '' : 'required'}></div>
                         <div class="field"><label>الراتب</label><input type="number" class="edit-salary" value="${w.salary}" step="0.01" required></div>
                         <div class="field"><label>شرح الحالة</label><input type="text" class="edit-desc" value="${w.status_description || ''}" required></div>
                         <div class="field"><label>الإجراء</label><select class="edit-action" required>${actionOptions.replace(`value="${w.action_type}"`, `value="${w.action_type}" selected`)}</select></div>
@@ -474,6 +474,27 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 </div>
             `).join('');
+            
+            // Add event listeners for all action dropdowns to toggle housing_entry_date requirement and visibility
+            editBody.querySelectorAll('.worker-row-group').forEach(group => {
+                const actionSelect = group.querySelector('.edit-action');
+                const housingDateField = group.querySelector('.housing-date-field');
+                const housingDateInput = group.querySelector('.edit-housing-date');
+                
+                const updateHousingDateField = () => {
+                    if (actionSelect.value === 'هروب') {
+                        housingDateField.style.display = 'none';
+                        housingDateInput.removeAttribute('required');
+                        housingDateInput.value = '';
+                    } else {
+                        housingDateField.style.display = 'block';
+                        housingDateInput.setAttribute('required', '');
+                    }
+                };
+                
+                actionSelect.addEventListener('change', updateHousingDateField);
+            });
+            
             editModal.style.display = 'block';
         };
     }
@@ -517,7 +538,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             <div class="form-row">
                 <div class="field"><label>دخول المملكة</label><input type="date" class="add-entry" required></div>
-                <div class="field"><label>دخول الإيواء</label><input type="date" class="add-housing-date" required></div>
+                <div class="field housing-date-field"><label>دخول الإيواء</label><input type="date" class="add-housing-date" required></div>
                 <div class="field"><label>الراتب</label><input type="number" class="add-salary" required placeholder="0.00" step="0.01"></div>
                 <div class="field"><label>شرح الحالة</label><input type="text" class="add-desc" required placeholder="شرح الحالة"></div>
                 <div class="field"><label>الإجراء</label><select class="add-action" required>${actionOptions}</select></div>
@@ -527,6 +548,27 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `;
         addBody.appendChild(group);
+        
+        // Add event listener to action dropdown to toggle housing_entry_date requirement and visibility
+        const actionSelect = group.querySelector('.add-action');
+        const housingDateField = group.querySelector('.housing-date-field');
+        const housingDateInput = group.querySelector('.add-housing-date');
+        
+        const updateHousingDateField = () => {
+            if (actionSelect.value === 'هروب') {
+                housingDateField.style.display = 'none';
+                housingDateInput.removeAttribute('required');
+                housingDateInput.value = '';
+            } else {
+                housingDateField.style.display = 'block';
+                housingDateInput.setAttribute('required', '');
+            }
+        };
+        
+        // Set initial state based on default action
+        updateHousingDateField();
+        
+        actionSelect.addEventListener('change', updateHousingDateField);
     };
 
     if (document.getElementById('addRowBtn')) {
@@ -568,11 +610,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     financial_notes: group.querySelector('.add-notes').value
                 };
 
-                // Check mandatory fields
-                const mandatoryFields = ['worker_name', 'passport', 'nationality', 'office', 'customer', 'national_id', 'guarantee_status', 'housing_location', 'entry_date', 'housing_entry_date', 'salary', 'status_description', 'action_type', 'ticket_info', 'settlement_status'];
+                // Check mandatory fields (housing_entry_date is optional only if action_type is 'هروب')
+                const mandatoryFields = ['worker_name', 'passport', 'nationality', 'office', 'customer', 'national_id', 'guarantee_status', 'housing_location', 'entry_date', 'salary', 'status_description', 'action_type', 'ticket_info', 'settlement_status'];
                 mandatoryFields.forEach(f => {
                     if (!rowData[f] || rowData[f] === '') allValid = false;
                 });
+                
+                // housing_entry_date is required only if action_type is NOT 'هروب'
+                if (rowData.action_type !== 'هروب' && (!rowData.housing_entry_date || rowData.housing_entry_date === '')) {
+                    allValid = false;
+                }
 
                 return rowData;
             }).filter(r => r.worker_name);
@@ -628,10 +675,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     financial_notes: group.querySelector('.edit-notes').value
                 };
 
-                const mandatoryFields = ['worker_name', 'passport', 'nationality', 'office', 'customer', 'national_id', 'guarantee_status', 'housing_location', 'entry_date', 'housing_entry_date', 'salary', 'status_description', 'action_type', 'ticket_info', 'settlement_status'];
+                const mandatoryFields = ['worker_name', 'passport', 'nationality', 'office', 'customer', 'national_id', 'guarantee_status', 'housing_location', 'entry_date', 'salary', 'status_description', 'action_type', 'ticket_info', 'settlement_status'];
                 mandatoryFields.forEach(f => {
                     if (!rowData[f] || rowData[f] === '') allValid = false;
                 });
+
+                // housing_entry_date is required only if action_type is NOT 'هروب'
+                if (rowData.action_type !== 'هروب' && (!rowData.housing_entry_date || rowData.housing_entry_date === '')) {
+                    allValid = false;
+                }
 
                 return rowData;
             });
@@ -779,6 +831,155 @@ document.addEventListener('DOMContentLoaded', () => {
                 // No selection, print everything as normal
                 window.print();
             }
+        };
+    }
+
+    // Excel Export Function
+    if (document.getElementById('exportExcelBtn')) {
+        document.getElementById('exportExcelBtn').onclick = () => {
+            const selected = document.querySelectorAll('.row-select:checked');
+            const rows = [];
+
+            // Get table headers (excluding details column)
+            const headers = [];
+            const headerCells = document.querySelectorAll('thead th');
+            headerCells.forEach((th, index) => {
+                if (index > 0 && index < headerCells.length - 1) { // Skip checkbox column and details column
+                    headers.push(th.textContent.trim());
+                }
+            });
+            rows.push(headers);
+
+            // Get visible rows (selected rows if any selected, or all rows)
+            const gatherRows = (tr) => {
+                const cells = tr.querySelectorAll('td');
+                const row = [];
+                for (let i = 0; i < cells.length; i++) {
+                    if (i > 0 && i < cells.length - 1) { // Skip checkbox and details
+                        row.push(cells[i].textContent.trim());
+                    }
+                }
+                return row;
+            };
+
+            if (selected.length > 0) {
+                selected.forEach(cb => {
+                    const r = gatherRows(cb.closest('tr'));
+                    if (r.length > 0) rows.push(r);
+                });
+            } else {
+                document.querySelectorAll('tbody tr').forEach(tr => {
+                    const r = gatherRows(tr);
+                    if (r.length > 0) rows.push(r);
+                });
+            }
+
+            // Create Excel workbook and sheet
+            const workbook = XLSX.utils.book_new();
+            const worksheet = XLSX.utils.aoa_to_sheet(rows);
+
+            // Determine indices for special formatting
+            const headerMap = {};
+            headers.forEach((h, i) => headerMap[h] = i);
+            const dateHeaders = ['دخول المملكة', 'دخول الإيواء', 'تاريخ الدخول', 'تاريخ دخول الإيواء'];
+            const dateIdx = headers.map((h, i) => dateHeaders.includes(h) ? i : -1).filter(i => i >= 0);
+            const salaryIdx = headers.findIndex(h => h === 'الراتب');
+
+            // Set header styles (bold, white text, colored background)
+            const XLSXUtils = XLSX.utils;
+            const encode = XLSXUtils.encode_cell;
+            const range = XLSXUtils.decode_range(worksheet['!ref']);
+
+            // Apply header style
+            for (let c = 0; c <= range.e.c; c++) {
+                const addr = encode({ c: c, r: 0 });
+                if (!worksheet[addr]) continue;
+                worksheet[addr].s = {
+                    font: { name: 'Calibri', sz: 12, bold: true, color: { rgb: 'FFFFFFFF' } },
+                    fill: { fgColor: { rgb: 'FF3478F6' } },
+                    alignment: { horizontal: 'center', vertical: 'center' },
+                    border: {
+                        top: { style: 'thin', color: { rgb: 'FFCCCCCC' } },
+                        bottom: { style: 'thin', color: { rgb: 'FFCCCCCC' } },
+                        left: { style: 'thin', color: { rgb: 'FFCCCCCC' } },
+                        right: { style: 'thin', color: { rgb: 'FFCCCCCC' } }
+                    }
+                };
+            }
+
+            // Convert data cells to proper types & apply styles (alternating rows)
+            for (let r = 1; r <= range.e.r; r++) {
+                const isEven = (r % 2) === 0;
+                for (let c = 0; c <= range.e.c; c++) {
+                    const addr = encode({ c: c, r: r });
+                    const cell = worksheet[addr];
+                    if (!cell) continue;
+
+                    // Salary formatting
+                    if (c === salaryIdx) {
+                        // remove commas and parse
+                        const val = String(cell.v).replace(/,/g, '').trim();
+                        const num = parseFloat(val) || 0;
+                        cell.v = num;
+                        cell.t = 'n';
+                        cell.z = '#,##0.00';
+                        cell.s = cell.s || {};
+                        cell.s.alignment = { horizontal: 'right', vertical: 'center' };
+                    }
+
+                    // Date formatting
+                    if (dateIdx.includes(c)) {
+                        const raw = String(cell.v).trim();
+                        const parsed = raw ? new Date(raw) : null;
+                        if (parsed && !isNaN(parsed)) {
+                            cell.v = parsed;
+                            cell.t = 'd';
+                            cell.z = 'yyyy-mm-dd';
+                        }
+                        cell.s = cell.s || {};
+                        cell.s.alignment = { horizontal: 'center', vertical: 'center' };
+                    }
+
+                    // Numeric-looking values (like days) -> align center
+                    if (typeof cell.v === 'number') {
+                        cell.s = cell.s || {};
+                        cell.s.alignment = { horizontal: 'center', vertical: 'center' };
+                    }
+
+                    // Apply alternating row shading for readability
+                    cell.s = cell.s || {};
+                    if (!cell.s.fill) {
+                        cell.s.fill = isEven ? { fgColor: { rgb: 'FFF7FBFF' } } : { fgColor: { rgb: 'FFFFFFFF' } };
+                    }
+                }
+            }
+
+            // Improve column widths based on header length and sample data
+            const colWidths = headers.map((h, idx) => {
+                // base on header length
+                let maxLen = h.length + 4;
+                for (let r = 1; r <= range.e.r; r++) {
+                    const addr = encode({ c: idx, r: r });
+                    const cell = worksheet[addr];
+                    if (cell && cell.v != null) {
+                        const l = String(cell.v).length;
+                        if (l + 2 > maxLen) maxLen = l + 2;
+                    }
+                }
+                // cap width
+                return { wch: Math.min(Math.max(maxLen, 12), 40) };
+            });
+            worksheet['!cols'] = colWidths;
+
+            XLSX.utils.book_append_sheet(workbook, worksheet, 'البيانات');
+
+            // Generate filename with date
+            const now = new Date();
+            const dateStr = now.toISOString().split('T')[0];
+            const filename = `accommodation_export_${dateStr}.xlsx`;
+
+            // Write file
+            XLSX.writeFile(workbook, filename, { bookType: 'xlsx', cellStyles: true });
         };
     }
 
