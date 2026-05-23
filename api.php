@@ -5,16 +5,38 @@ require_once 'config.php';
 header('Content-Type: application/json');
 
 $action = $_GET['action'] ?? '';
-$is_archived = isset($_GET['archived']) && $_GET['archived'] == '1' ? 1 : 0;
+$archived_param = $_GET['archived'] ?? '0';
 
 switch ($action) {
     case 'list':
         try {
+            if ($archived_param === 'all') {
+                $stmt = $pdo->prepare("SELECT *, 
+                    DATEDIFF(CURRENT_DATE, entry_date) as days_in_ksa,
+                    DATEDIFF(CURRENT_DATE, housing_entry_date) as days_in_housing 
+                    FROM workers ORDER BY id DESC");
+                $stmt->execute();
+            } else {
+                $is_archived = $archived_param == '1' ? 1 : 0;
+                $stmt = $pdo->prepare("SELECT *, 
+                    DATEDIFF(CURRENT_DATE, entry_date) as days_in_ksa,
+                    DATEDIFF(CURRENT_DATE, housing_entry_date) as days_in_housing 
+                    FROM workers WHERE is_archived = ? ORDER BY id DESC");
+                $stmt->execute([$is_archived]);
+            }
+            echo json_encode($stmt->fetchAll());
+        } catch (Exception $e) {
+            echo json_encode(['error' => $e->getMessage()]);
+        }
+        break;
+
+    case 'list_all':
+        try {
             $stmt = $pdo->prepare("SELECT *, 
                 DATEDIFF(CURRENT_DATE, entry_date) as days_in_ksa,
                 DATEDIFF(CURRENT_DATE, housing_entry_date) as days_in_housing 
-                FROM workers WHERE is_archived = ? ORDER BY id DESC");
-            $stmt->execute([$is_archived]);
+                FROM workers ORDER BY id DESC");
+            $stmt->execute();
             echo json_encode($stmt->fetchAll());
         } catch (Exception $e) {
             echo json_encode(['error' => $e->getMessage()]);

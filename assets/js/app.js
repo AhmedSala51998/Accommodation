@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let allWorkers = [];
     let allOffices = [];
     const isArchivePage = typeof PAGE_TYPE !== 'undefined' && PAGE_TYPE === 'archive';
+    const isAllPage = typeof PAGE_TYPE !== 'undefined' && PAGE_TYPE === 'all';
 
     // Select Elements
     const workerBody = document.getElementById('workerBody');
@@ -73,8 +74,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Fetch Workers
     const fetchWorkers = async () => {
         try {
-            const archivedParam = isArchivePage ? '1' : '0';
-            const response = await fetch(`api.php?action=list&archived=${archivedParam}`);
+            const url = isAllPage ? 'api.php?action=list_all' : `api.php?action=list&archived=${isArchivePage ? '1' : '0'}`;
+            const response = await fetch(url);
             allWorkers = await response.json();
             applyFilters();
         } catch (e) {
@@ -300,6 +301,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const officeFilterVal = filterOffice ? filterOffice.value : '';
         const actionFilter = document.getElementById('filterAction').value;
         const settlementFilter = document.getElementById('filterSettlement').value;
+        const statusFilterEl = document.getElementById('filterStatus');
+        const statusFilter = statusFilterEl ? statusFilterEl.value : '';
 
         const filtered = allWorkers.filter(row => {
             const matchesSearch = Object.values(row).some(val => String(val).toLowerCase().includes(searchTerm));
@@ -309,15 +312,22 @@ document.addEventListener('DOMContentLoaded', () => {
             const matchesOffice = !officeFilterVal || row.office === officeFilterVal;
             const matchesAction = !actionFilter || row.action_type === actionFilter;
             const matchesSettlement = !settlementFilter || row.settlement_status === settlementFilter;
+            
+            let matchesStatus = true;
+            if (statusFilter === 'active') {
+                matchesStatus = parseInt(row.is_archived) === 0;
+            } else if (statusFilter === 'archived') {
+                matchesStatus = parseInt(row.is_archived) === 1;
+            }
 
-            return matchesSearch && matchesGuarantee && matchesNat && matchesHousing && matchesOffice && matchesAction && matchesSettlement;
+            return matchesSearch && matchesGuarantee && matchesNat && matchesHousing && matchesOffice && matchesAction && matchesSettlement && matchesStatus;
         });
 
         renderTable(filtered);
     };
 
     globalSearch.addEventListener('input', applyFilters);
-    ['filterGuarantee', 'filterNationality', 'filterHousing', 'filterOffice', 'filterAction', 'filterSettlement'].forEach(id => {
+    ['filterGuarantee', 'filterNationality', 'filterHousing', 'filterOffice', 'filterAction', 'filterSettlement', 'filterStatus'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.addEventListener('change', applyFilters);
     });
@@ -525,7 +535,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const clearFilters = () => {
         globalSearch.value = '';
-        ['filterGuarantee', 'filterNationality', 'filterHousing', 'filterOffice', 'filterAction', 'filterSettlement'].forEach(id => {
+        ['filterGuarantee', 'filterNationality', 'filterHousing', 'filterOffice', 'filterAction', 'filterSettlement', 'filterStatus'].forEach(id => {
             const el = document.getElementById(id);
             if (el) el.value = '';
         });

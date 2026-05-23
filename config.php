@@ -3,7 +3,11 @@
 $host = 'localhost';
 $db = 'u552468652_accommodation';
 $user = 'u552468652_accommodation';
-$pass = 'Accommodation2026'; // Default XAMPP password is empty
+$pass = 'Accommodation2026';
+
+/*$db = 'accommodation_db';
+$user = 'root';
+$pass = '';*/
 $charset = 'utf8mb4';
 
 $dsn = "mysql:host=$host;dbname=$db;charset=$charset";

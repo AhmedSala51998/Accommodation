@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام إدارة سكن العاملات</title>
+    <title>كل العاملات (نشط + مؤرشف)</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css?v=1.5">
@@ -105,15 +105,15 @@
 
 <body>
     <div class="dashboard-container">
-        <header>
+        <header style="background: linear-gradient(135deg, #7209b7 0%, #4361ee 100%); box-shadow: 0 15px 35px -5px rgba(114, 9, 183, 0.35);">
             <div class="header-content" style="flex-direction: column; align-items: stretch; gap: 0;">
                 <!-- Row 1: Title and Navigation -->
                 <div class="header-row-1">
-                    <h1>إدارة سكن العاملات</h1>
+                    <h1>كل العاملات (نشط + مؤرشف)</h1>
                     <div class="header-nav">
                         <button id="manageOfficesBtn" class="btn btn-secondary"><i class="fas fa-building"></i> إدارة المكاتب</button>
+                        <a href="index.php" class="btn btn-success"><i class="fas fa-home"></i> الرئيسية</a>
                         <a href="archive.php" class="btn btn-success"><i class="fas fa-box-open"></i> الأرشيف</a>
-                        <a href="all_workers.php" class="btn btn-success" style="background: #3f37c9; color: white; border-color: #3f37c9;"><i class="fas fa-users"></i> كل العاملات</a>
                     </div>
                 </div>
                 <!-- Row 2: Action Buttons -->
@@ -123,6 +123,7 @@
                     <button id="bulkEditBtn" class="btn btn-warning" disabled><i class="fas fa-edit"></i> تعديل محدد</button>
                     <button id="bulkDeleteBtn" class="btn btn-danger" disabled><i class="fas fa-trash"></i> حذف محدد</button>
                     <button id="bulkArchiveBtn" class="btn btn-secondary" disabled><i class="fas fa-archive"></i> أرشفة المحدد</button>
+                    <button id="bulkUnarchiveBtn" class="btn btn-primary" disabled><i class="fas fa-undo"></i> إلغاء أرشفة المحدد</button>
                     <div class="range-selector" style="display: flex; align-items: center; gap: 4px; background: rgba(255,255,255,0.15); padding: 4px 8px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.2);">
                         <span style="font-size: 11px; font-weight: bold; color: white;">من:</span>
                         <input type="number" id="rangeFrom" min="1" style="width: 45px; height: 28px; border-radius: 6px; border: none; text-align: center; font-size: 12px; font-weight: bold;">
@@ -137,12 +138,12 @@
 
         <div class="print-header" style="display: none;">
             <h1 style="text-align: center; margin-bottom: 20px; border-bottom: 3px solid #000; padding-bottom: 10px;">
-                تقرير بيانات سكن العاملات</h1>
+                تقرير بيانات كل عاملات السكن</h1>
             <div style="display: flex; justify-content: space-between; margin-bottom: 15px; font-weight: bold;">
                 <span>تاريخ التقرير:
                     <?php echo date('Y-m-d'); ?>
                 </span>
-                <span>الفرع: الإدارة العامة</span>
+                <span>الفرع: الإدارة العامة (الكل)</span>
             </div>
         </div>
 
@@ -191,6 +192,11 @@
                     <option value="تم الخصم">تم الخصم</option>
                     <option value="تم الخصم جزئياً">تم الخصم جزئياً</option>
                     <option value="لا تخصم">لا تخصم</option>
+                </select>
+                <select id="filterStatus">
+                    <option value="">كل الحالات (الأرشيف)</option>
+                    <option value="active">نشطة فقط</option>
+                    <option value="archived">مؤرشفة فقط</option>
                 </select>
             </div>
         </section>
@@ -436,7 +442,7 @@
     </div>
 
     <div id="toastContainer" class="toast-container"></div>
-    <script>const PAGE_TYPE = 'main';</script>
+    <script>const PAGE_TYPE = 'all';</script>
     <script src="assets/js/app.js?v=1.6"></script>
     <!-- Standalone Excel Script (Force Refresh) -->
     <script src="assets/js/excel_importer.js?v=1.4"></script>

@@ -7,7 +7,7 @@
     <title>أرشيف العاملات</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/style.css?v=1.5">
     <!-- jQuery (Required for archive data and features) -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
@@ -15,16 +15,20 @@
 <body>
     <div class="dashboard-container">
         <header style="background: linear-gradient(135deg, #64748b 0%, #334155 100%);">
-            <div class="header-content">
-                <h1>أرشيف العاملات</h1>
-                <div class="header-actions">
-                    <button id="bulkEditBtn" class="btn btn-warning" disabled><i class="fas fa-edit"></i> تعديل
-                        محدد</button>
-                    <button id="bulkUnarchiveBtn" class="btn btn-primary" disabled><i class="fas fa-undo"></i> إلغاء
-                        أرشفة المحدد</button>
-                    <button id="bulkDeleteBtn" class="btn btn-danger" disabled><i class="fas fa-trash"></i> حذف
-                        نهائي</button>
-                    <a href="index.php" class="btn btn-success"><i class="fas fa-arrow-right"></i> العودة للرئيسية</a>
+            <div class="header-content" style="flex-direction: column; align-items: stretch; gap: 0;">
+                <!-- Row 1: Title and Navigation -->
+                <div class="header-row-1">
+                    <h1>أرشيف العاملات</h1>
+                    <div class="header-nav">
+                        <a href="index.php" class="btn btn-success"><i class="fas fa-arrow-right"></i> العودة للرئيسية</a>
+                        <a href="all_workers.php" class="btn btn-success" style="background: #3f37c9; color: white; border-color: #3f37c9;"><i class="fas fa-users"></i> كل العاملات</a>
+                    </div>
+                </div>
+                <!-- Row 2: Action Buttons -->
+                <div class="header-row-2">
+                    <button id="bulkEditBtn" class="btn btn-warning" disabled><i class="fas fa-edit"></i> تعديل محدد</button>
+                    <button id="bulkUnarchiveBtn" class="btn btn-primary" disabled><i class="fas fa-undo"></i> إلغاء أرشفة المحدد</button>
+                    <button id="bulkDeleteBtn" class="btn btn-danger" disabled><i class="fas fa-trash"></i> حذف نهائي</button>
                     <div class="range-selector" style="display: flex; align-items: center; gap: 4px; background: rgba(255,255,255,0.15); padding: 4px 8px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.2);">
                         <span style="font-size: 11px; font-weight: bold; color: white;">من:</span>
                         <input type="number" id="rangeFrom" min="1" style="width: 45px; height: 28px; border-radius: 6px; border: none; text-align: center; font-size: 12px; font-weight: bold;">
@@ -165,7 +169,7 @@
 
     <div id="toastContainer" class="toast-container"></div>
     <script>const PAGE_TYPE = 'archive';</script>
-    <script src="assets/js/app.js"></script>
+    <script src="assets/js/app.js?v=1.6"></script>
 </body>
 
 </html>
