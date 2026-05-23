@@ -21,7 +21,7 @@
                     <h1>أرشيف العاملات</h1>
                     <div class="header-nav">
                         <a href="index.php" class="btn btn-success"><i class="fas fa-arrow-right"></i> العودة للرئيسية</a>
-                        <a href="all_workers.php" class="btn btn-success" style="background: #3f37c9; color: white; border-color: #3f37c9;"><i class="fas fa-users"></i> كل العاملات</a>
+                        <a href="all_workers.php" class="btn btn-success" style="background: #3f37c9; color: white; border-color: #3f37c9;"><i class="fas fa-users"></i> تقرير شامل للعاملات</a>
                     </div>
                 </div>
                 <!-- Row 2: Action Buttons -->

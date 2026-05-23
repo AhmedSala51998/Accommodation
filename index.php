@@ -113,7 +113,7 @@
                     <div class="header-nav">
                         <button id="manageOfficesBtn" class="btn btn-secondary"><i class="fas fa-building"></i> إدارة المكاتب</button>
                         <a href="archive.php" class="btn btn-success"><i class="fas fa-box-open"></i> الأرشيف</a>
-                        <a href="all_workers.php" class="btn btn-success" style="background: #3f37c9; color: white; border-color: #3f37c9;"><i class="fas fa-users"></i> كل العاملات</a>
+                        <a href="all_workers.php" class="btn btn-success" style="background: #3f37c9; color: white; border-color: #3f37c9;"><i class="fas fa-users"></i> تقرير شامل للعاملات</a>
                     </div>
                 </div>
                 <!-- Row 2: Action Buttons -->

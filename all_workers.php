@@ -109,7 +109,7 @@
             <div class="header-content" style="flex-direction: column; align-items: stretch; gap: 0;">
                 <!-- Row 1: Title and Navigation -->
                 <div class="header-row-1">
-                    <h1>كل العاملات (نشط + مؤرشف)</h1>
+                    <h1>تقرير شامل للعاملات</h1>
                     <div class="header-nav">
                         <button id="manageOfficesBtn" class="btn btn-secondary"><i class="fas fa-building"></i> إدارة المكاتب</button>
                         <a href="index.php" class="btn btn-success"><i class="fas fa-home"></i> الرئيسية</a>
@@ -119,7 +119,7 @@
                 <!-- Row 2: Action Buttons -->
                 <div class="header-row-2">
                     <button class="btn btn-success" onclick="excelImporter.openModal()"><i class="fas fa-file-excel"></i> استيراد Excel</button>
-                    <button id="bulkAddBtn" class="btn btn-primary"><i class="fas fa-plus-circle"></i> إضافة </button>
+                    <!--<button id="bulkAddBtn" class="btn btn-primary"><i class="fas fa-plus-circle"></i> إضافة </button>-->
                     <button id="bulkEditBtn" class="btn btn-warning" disabled><i class="fas fa-edit"></i> تعديل محدد</button>
                     <button id="bulkDeleteBtn" class="btn btn-danger" disabled><i class="fas fa-trash"></i> حذف محدد</button>
                     <button id="bulkArchiveBtn" class="btn btn-secondary" disabled><i class="fas fa-archive"></i> أرشفة المحدد</button>
