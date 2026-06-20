@@ -177,7 +177,7 @@
 
     <div id="toastContainer" class="toast-container"></div>
     <script>const PAGE_TYPE = 'admin_report';</script>
-    <script src="assets/js/app.js?v=1.6"></script>
+    <script src="assets/js/app.js?v=1.7"></script>
     <script src="assets/js/excel_importer.js?v=1.4"></script>
 </body>
 

@@ -172,7 +172,7 @@
 
     <div id="toastContainer" class="toast-container"></div>
     <script>const PAGE_TYPE = 'archive';</script>
-    <script src="assets/js/app.js?v=1.6"></script>
+    <script src="assets/js/app.js?v=1.7"></script>
 </body>
 
 </html>
