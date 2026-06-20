@@ -7,7 +7,7 @@
     <title>كل العاملات (نشط + مؤرشف)</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/style.css?v=1.5">
+    <link rel="stylesheet" href="assets/css/style.css?v=1.6">
     <!-- jQuery (Required for search and dynamic features) -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- SheetJS for Excel Parsing -->
@@ -444,7 +444,7 @@
 
     <div id="toastContainer" class="toast-container"></div>
     <script>const PAGE_TYPE = 'all';</script>
-    <script src="assets/js/app.js?v=1.7"></script>
+    <script src="assets/js/app.js?v=1.8"></script>
     <!-- Standalone Excel Script (Force Refresh) -->
     <script src="assets/js/excel_importer.js?v=1.4"></script>
 </body>
