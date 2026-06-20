@@ -1,0 +1,143 @@
+<!-- نافذة سجل الأنشطة للعاملة -->
+<div id="workerActivityModal" class="modal" style="display: none;">
+    <div class="modal-content" style="max-width: 800px; max-height: 90vh; overflow-y: auto;">
+        <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #e2e8f0; padding-bottom: 15px;">
+            <h2 id="workerActivityTitle" style="margin: 0; font-size: 18px;"><i class="fas fa-history"></i> سجل الأنشطة</h2>
+            <button style="background: none; border: none; font-size: 24px; cursor: pointer; color: #64748b;" onclick="closeWorkerActivityModal()">&times;</button>
+        </div>
+        <div id="workerActivityContent"></div>
+    </div>
+</div>
+
+<style>
+    .activity-timeline {
+        position: relative;
+        padding: 20px 0;
+    }
+
+    .activity-item {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 20px;
+        position: relative;
+    }
+
+    .activity-item::before {
+        content: '';
+        position: absolute;
+        left: 20px;
+        top: 50px;
+        width: 2px;
+        height: calc(100% + 20px);
+        background: #e2e8f0;
+    }
+
+    .activity-item:last-child::before {
+        display: none;
+    }
+
+    .activity-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 600;
+        position: relative;
+        z-index: 1;
+        flex-shrink: 0;
+    }
+
+    .activity-icon.add {
+        background: #10b981;
+    }
+
+    .activity-icon.edit {
+        background: #f59e0b;
+    }
+
+    .activity-icon.delete {
+        background: #ef4444;
+    }
+
+    .activity-icon.archive {
+        background: #8b5cf6;
+    }
+
+    .activity-details {
+        flex: 1;
+        background: #f8fafc;
+        padding: 12px 15px;
+        border-radius: 8px;
+    }
+
+    .activity-action {
+        font-weight: 600;
+        color: #1e293b;
+        margin-bottom: 5px;
+    }
+
+    .activity-user {
+        font-size: 12px;
+        color: #64748b;
+    }
+
+    .activity-time {
+        font-size: 12px;
+        color: #94a3b8;
+        margin-top: 5px;
+    }
+</style>
+
+<script>
+    function openWorkerActivityModal(workerId, workerName) {
+        fetch(`get_worker_activity.php?worker_id=${workerId}`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('workerActivityTitle').textContent = `سجل الأنشطة - ${workerName}`;
+                
+                let html = '<div class="activity-timeline">';
+                if (data.length === 0) {
+                    html += '<div style="text-align: center; color: #64748b; padding: 20px;"><i class="fas fa-inbox" style="font-size: 32px; color: #cbd5e1; display: block; margin-bottom: 10px;"></i> لا توجد أنشطة مسجلة</div>';
+                } else {
+                    data.forEach(activity => {
+                        const actionType = activity.action.toLowerCase();
+                        let iconClass = 'add';
+                        if (actionType === 'edit') iconClass = 'edit';
+                        if (actionType === 'delete') iconClass = 'delete';
+                        if (actionType === 'archive') iconClass = 'archive';
+
+                        html += `<div class="activity-item">
+                            <div class="activity-icon ${iconClass}">${activity.action.charAt(0)}</div>
+                            <div class="activity-details">
+                                <div class="activity-action">${activity.description || activity.action}</div>
+                                <div class="activity-user"><i class="fas fa-user"></i> ${activity.full_name}</div>
+                                <div class="activity-time"><i class="fas fa-clock"></i> ${activity.created_at}</div>
+                            </div>
+                        </div>`;
+                    });
+                }
+                html += '</div>';
+                
+                document.getElementById('workerActivityContent').innerHTML = html;
+                document.getElementById('workerActivityModal').style.display = 'block';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('workerActivityContent').innerHTML = '<div style="color: #ef4444; padding: 20px;">حدث خطأ في تحميل السجل</div>';
+            });
+    }
+
+    function closeWorkerActivityModal() {
+        document.getElementById('workerActivityModal').style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+        const modal = document.getElementById('workerActivityModal');
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    }
+</script>

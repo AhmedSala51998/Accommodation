@@ -226,36 +226,72 @@ document.addEventListener('DOMContentLoaded', () => {
     // Render Main Table
     let lastChecked = null;
     const renderTable = (data) => {
-        workerBody.innerHTML = data.map((row, index) => `
-            <tr>
-                <td><input type="checkbox" class="row-select" value="${row.id}"></td>
-                <td>${index + 1}</td>
-                <td><strong>${row.worker_name}</strong></td>
-                <td>${row.passport || ''}</td>
-                <td>${row.nationality || ''}</td>
-                <td>${row.office || ''}</td>
-                <td>${row.customer || ''}</td>
-                <td>${row.national_id || ''}</td>
-                <td><span class="badge ${row.guarantee_status === 'داخل الضمان' ? 'badge-success' : 'badge-danger'}">${row.guarantee_status}</span></td>
-                <td>${row.housing_location || ''}</td>
-                <td>${row.entry_date || ''}</td>
-                <td>${row.days_in_ksa || 0}</td>
-                <td>${row.housing_entry_date || ''}</td>
-                <td>${row.days_in_housing || 0}</td>
-                <td>${parseFloat(row.salary).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
-                <td>${row.action_type || ''}</td>
-                <td>${row.ticket_info || ''}</td>
-                <td>${row.settlement_status || ''}</td>
-                <td class="details-cell no-print">
-                    <button class="icon-btn btn-info" onclick="showDetail('شرح الحالة', \`${row.status_description || ''}\`)" title="شرح الحالة">
-                        <i class="fas fa-comment-alt"></i>
-                    </button>
-                    <button class="icon-btn btn-note" onclick="showDetail('الملاحظات المالية', \`${row.financial_notes || ''}\`)" title="الملاحظات المالية">
-                        <i class="fas fa-file-invoice-dollar"></i>
-                    </button>
-                </td>
-            </tr>
-        `).join('');
+        if (typeof PAGE_TYPE !== 'undefined' && PAGE_TYPE === 'admin_report') {
+            if (data && data.length > 0) console.log('ADMIN_REPORT first row:', data[0]);
+            workerBody.innerHTML = data.map((row, index) => `
+                <tr>
+                    <td><input type="checkbox" class="row-select" value="${row.id}"></td>
+                    <td>${index + 1}</td>
+                    <td><strong>${row.worker_name}</strong></td>
+                    <td>${row.passport || ''}</td>
+                    <td>${row.nationality || ''}</td>
+                    <td>${row.office || ''}</td>
+                    <td>${row.customer || ''}</td>
+                    <td>${row.national_id || ''}</td>
+                    <td><span class="badge ${row.guarantee_status === 'داخل الضمان' ? 'badge-success' : 'badge-danger'}">${row.guarantee_status}</span></td>
+                    <td>${row.housing_location || ''}</td>
+                    <td>${row.entry_date || ''}</td>
+                    <td>${row.days_in_ksa || 0}</td>
+                    <td>${row.housing_entry_date || ''}</td>
+                    <td>${row.days_in_housing || 0}</td>
+                    <td>${row.mobile || ''}</td>
+                    <td>${row.receiver || ''}</td>
+                    <td>${row.receiver_other || ''}</td>
+                    <td>${row.passport_missing || ''}</td>
+                    <td>${row.passport_missing_note || ''}</td>
+                    <td>${row.case_status || ''}</td>
+                    <td class="details-cell no-print">
+                        <button class="icon-btn btn-info" onclick="showDetail('شرح الحالة', \`${row.status_description || ''}\`)" title="شرح الحالة">
+                            <i class="fas fa-comment-alt"></i>
+                        </button>
+                        <button class="icon-btn btn-note" onclick="showDetail('الملاحظات المالية', \`${row.financial_notes || ''}\`)" title="الملاحظات المالية">
+                            <i class="fas fa-file-invoice-dollar"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        } else {
+            workerBody.innerHTML = data.map((row, index) => `
+                <tr>
+                    <td><input type="checkbox" class="row-select" value="${row.id}"></td>
+                    <td>${index + 1}</td>
+                    <td><strong>${row.worker_name}</strong></td>
+                    <td>${row.passport || ''}</td>
+                    <td>${row.nationality || ''}</td>
+                    <td>${row.office || ''}</td>
+                    <td>${row.customer || ''}</td>
+                    <td>${row.national_id || ''}</td>
+                    <td><span class="badge ${row.guarantee_status === 'داخل الضمان' ? 'badge-success' : 'badge-danger'}">${row.guarantee_status}</span></td>
+                    <td>${row.housing_location || ''}</td>
+                    <td>${row.entry_date || ''}</td>
+                    <td>${row.days_in_ksa || 0}</td>
+                    <td>${row.housing_entry_date || ''}</td>
+                    <td>${row.days_in_housing || 0}</td>
+                    <td>${parseFloat(row.salary).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+                    <td>${row.action_type || ''}</td>
+                    <td>${row.ticket_info || ''}</td>
+                    <td>${row.settlement_status || ''}</td>
+                    <td class="details-cell no-print">
+                        <button class="icon-btn btn-info" onclick="showDetail('شرح الحالة', \`${row.status_description || ''}\`)" title="شرح الحالة">
+                            <i class="fas fa-comment-alt"></i>
+                        </button>
+                        <button class="icon-btn btn-note" onclick="showDetail('الملاحظات المالية', \`${row.financial_notes || ''}\`)" title="الملاحظات المالية">
+                            <i class="fas fa-file-invoice-dollar"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
 
         const checkboxes = document.querySelectorAll('.row-select');
         checkboxes.forEach((cb, index) => {
@@ -459,6 +495,17 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="field"><label>المكتب</label><select class="edit-office" required><option value="">اختر المكتب</option>${getOfficeOptions(w.office)}</select></div>
                         <div class="field"><label>العميل</label><input type="text" class="edit-customer" value="${w.customer || ''}" required></div>
                         <div class="field"><label>الهوية</label><input type="text" class="edit-id" value="${w.national_id || ''}" required></div>
+                        <div class="field"><label>رقم الجوال</label><input type="text" class="edit-mobile" value="${w.mobile || ''}" placeholder="رقم الجوال"></div>
+                        <div class="field"><label>جهة الاستلام</label>
+                            <select class="edit-receiver">
+                                <option value="">اختر جهة الاستلام</option>
+                                <option value="العميل" ${w.receiver === 'العميل' ? 'selected' : ''}>العميل</option>
+                                <option value="سيلسيك" ${w.receiver === 'سيلسيك' ? 'selected' : ''}>سيلسيك</option>
+                                <option value="الشرطة" ${w.receiver === 'الشرطة' ? 'selected' : ''}>الشرطة</option>
+                                <option value="اخرى" ${w.receiver === 'اخرى' ? 'selected' : ''}>اخرى</option>
+                            </select>
+                        </div>
+                        <div class="field" style="display: ${w.receiver === 'اخرى' ? 'block' : 'none'};"><label>جهة الاستلام - اذكر</label><input type="text" class="edit-receiver-other" value="${w.receiver_other || ''}" placeholder="اذكر الجهة اذا كانت أخرى"></div>
                         <div class="field"><label>حالة الضمان</label><select class="edit-guarantee" required><option value="داخل الضمان" ${w.guarantee_status === 'داخل الضمان' ? 'selected' : ''}>داخل الضمان</option><option value="خارج الضمان" ${w.guarantee_status === 'خارج الضمان' ? 'selected' : ''}>خارج الضمان</option></select></div>
                         <div class="field"><label>الموقع</label><select class="edit-housing" required>${housingOptions.replace(`value="${w.housing_location}"`, `value="${w.housing_location}" selected`)}</select></div>
                     </div>
@@ -468,8 +515,15 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="field"><label>الراتب</label><input type="number" class="edit-salary" value="${w.salary}" step="0.01" required></div>
                         <div class="field"><label>شرح الحالة</label><input type="text" class="edit-desc" value="${w.status_description || ''}" required></div>
                         <div class="field"><label>الإجراء</label><select class="edit-action" required>${actionOptions.replace(`value="${w.action_type}"`, `value="${w.action_type}" selected`)}</select></div>
+                        <div class="field"><label>الحالة</label><input type="text" class="edit-status" value="${w.case_status || ''}" placeholder="الحالة"></div>
                         <div class="field"><label>التذكرة</label><input type="text" class="edit-ticket" value="${w.ticket_info || ''}" required></div>
                         <div class="field"><label>التسوية</label><select class="edit-settlement" required>${settlementOptions.replace(`value="${w.settlement_status}"`, `value="${w.settlement_status}" selected`)}</select></div>
+                        <div class="field" style="display:flex; align-items:center; gap:8px;">
+                            <label style="min-width:140px;">الجواز مفقود؟</label>
+                            <label><input type="radio" name="edit_passport_missing_${w.id}" class="edit-passport-missing" value="لا" ${w.passport_missing !== 'نعم' ? 'checked' : ''}> لا</label>
+                            <label><input type="radio" name="edit_passport_missing_${w.id}" class="edit-passport-missing" value="نعم" ${w.passport_missing === 'نعم' ? 'checked' : ''}> نعم</label>
+                        </div>
+                        <div class="field" style="display: ${w.passport_missing === 'نعم' ? 'block' : 'none'};"><label>ملاحظة عن فقدان الجواز</label><input type="text" class="edit-passport-missing-note" value="${w.passport_missing_note || ''}" placeholder="اشرح حالة فقدان الجواز"></div>
                         <div class="field"><label>ملاحظات</label><input type="text" class="edit-notes" value="${w.financial_notes || ''}"></div>
                     </div>
                 </div>
@@ -493,6 +547,52 @@ document.addEventListener('DOMContentLoaded', () => {
                 };
                 
                 actionSelect.addEventListener('change', updateHousingDateField);
+
+                // Map action -> default case status for edit
+                const actionStatusMapEdit = {
+                    'السكن': 'داخل السكن',
+                    'نقل خدمات': 'قيد النقل',
+                    'خروج نهائي': 'خارج النظام',
+                    'هروب': 'هارب',
+                    'اخرى': ''
+                };
+
+                // Receiver other logic for edit
+                const receiverSelect = group.querySelector('.edit-receiver');
+                const receiverOtherField = group.querySelector('.edit-receiver-other');
+                if (receiverSelect) {
+                    receiverSelect.addEventListener('change', () => {
+                        if (receiverSelect.value === 'اخرى') {
+                            receiverOtherField.parentElement.style.display = 'block';
+                        } else {
+                            receiverOtherField.parentElement.style.display = 'none';
+                            receiverOtherField.value = '';
+                        }
+                    });
+                }
+
+                // Action -> status update for edit
+                const editStatusField = group.querySelector('.edit-status');
+                const updateStatusFieldEdit = () => {
+                    if (editStatusField) editStatusField.value = actionStatusMapEdit[actionSelect.value] || '';
+                };
+                // initialize and listen for changes
+                updateStatusFieldEdit();
+                actionSelect.addEventListener('change', updateStatusFieldEdit);
+
+                // Passport missing logic for edit
+                const passportMissingRadios = group.querySelectorAll('.edit-passport-missing');
+                const passportMissingNote = group.querySelector('.edit-passport-missing-note');
+                passportMissingRadios.forEach(r => r.addEventListener('change', () => {
+                    const checked = group.querySelector('.edit-passport-missing:checked');
+                    const v = checked ? checked.value : 'لا';
+                    if (v === 'نعم') {
+                        passportMissingNote.parentElement.style.display = 'block';
+                    } else {
+                        passportMissingNote.parentElement.style.display = 'none';
+                        passportMissingNote.value = '';
+                    }
+                }));
             });
             
             editModal.style.display = 'block';
@@ -533,6 +633,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="field"><label>المكتب</label><select class="add-office" required><option value="">اختر المكتب</option>${getOfficeOptions()}</select></div>
                 <div class="field"><label>العميل</label><input type="text" class="add-customer" required placeholder="العميل"></div>
                 <div class="field"><label>الهوية</label><input type="text" class="add-id" required placeholder="الهوية"></div>
+                <div class="field"><label>رقم الجوال</label><input type="text" class="add-mobile" placeholder="رقم الجوال"></div>
+                <div class="field"><label>جهة الاستلام</label>
+                    <select class="add-receiver">
+                        <option value="">اختر جهة الاستلام</option>
+                        <option value="العميل">العميل</option>
+                        <option value="سيلسيك">سيلسيك</option>
+                        <option value="الشرطة">الشرطة</option>
+                        <option value="اخرى">اخرى</option>
+                    </select>
+                </div>
+                <div class="field" style="display:none;"><label>جهة الاستلام - اذكر</label><input type="text" class="add-receiver-other" placeholder="اذكر الجهة اذا كانت أخرى"></div>
                 <div class="field"><label>حالة الضمان</label><select class="add-guarantee" required><option value="داخل الضمان">داخل الضمان</option><option value="خارج الضمان">خارج الضمان</option></select></div>
                 <div class="field"><label>الموقع</label><select class="add-housing" required>${housingOptions}</select></div>
             </div>
@@ -542,9 +653,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="field"><label>الراتب</label><input type="number" class="add-salary" required placeholder="0.00" step="0.01"></div>
                 <div class="field"><label>شرح الحالة</label><input type="text" class="add-desc" required placeholder="شرح الحالة"></div>
                 <div class="field"><label>الإجراء</label><select class="add-action" required>${actionOptions}</select></div>
+                <div class="field"><label>الحالة</label><input type="text" class="add-status" placeholder="الحالة"></div>
                 <div class="field"><label>التذكرة</label><input type="text" class="add-ticket" required placeholder="التذكرة"></div>
                 <div class="field"><label>التسوية</label><select class="add-settlement" required>${settlementOptions}</select></div>
                 <div class="field"><label>ملاحظات</label><input type="text" class="add-notes" placeholder="ملاحظات مالية"></div>
+                <div class="field" style="display:flex; align-items:center; gap:8px;">
+                    <label style="min-width:140px;">الجواز مفقود؟</label>
+                    <label><input type="radio" name="passport_missing_${index}" class="add-passport-missing" value="لا" checked> لا</label>
+                    <label><input type="radio" name="passport_missing_${index}" class="add-passport-missing" value="نعم"> نعم</label>
+                </div>
+                <div class="field" style="display:none;"><label>ملاحظة عن فقدان الجواز</label><input type="text" class="add-passport-missing-note" placeholder="اشرح حالة فقدان الجواز"></div>
             </div>
         `;
         addBody.appendChild(group);
@@ -554,6 +672,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const housingDateField = group.querySelector('.housing-date-field');
         const housingDateInput = group.querySelector('.add-housing-date');
         
+        // Map action -> default case status
+        const actionStatusMapAdd = {
+            'السكن': 'داخل السكن',
+            'نقل خدمات': 'قيد النقل',
+            'خروج نهائي': 'خارج النظام',
+            'هروب': 'هارب',
+            'اخرى': ''
+        };
+
+        const statusField = group.querySelector('.add-status');
+
         const updateHousingDateField = () => {
             if (actionSelect.value === 'هروب') {
                 housingDateField.style.display = 'none';
@@ -564,11 +693,46 @@ document.addEventListener('DOMContentLoaded', () => {
                 housingDateInput.setAttribute('required', '');
             }
         };
-        
+
+        const updateStatusField = () => {
+            statusField.value = actionStatusMapAdd[actionSelect.value] || '';
+        };
+
         // Set initial state based on default action
         updateHousingDateField();
-        
-        actionSelect.addEventListener('change', updateHousingDateField);
+        updateStatusField();
+
+        actionSelect.addEventListener('change', () => {
+            updateHousingDateField();
+            updateStatusField();
+        });
+
+        // Receiver other logic
+        const receiverSelect = group.querySelector('.add-receiver');
+        const receiverOtherField = group.querySelector('.add-receiver-other');
+        if (receiverSelect) {
+            receiverSelect.addEventListener('change', () => {
+                if (receiverSelect.value === 'اخرى') {
+                    receiverOtherField.parentElement.style.display = 'block';
+                } else {
+                    receiverOtherField.parentElement.style.display = 'none';
+                    receiverOtherField.value = '';
+                }
+            });
+        }
+
+        // Passport missing logic
+        const passportMissingRadios = group.querySelectorAll('.add-passport-missing');
+        const passportMissingNote = group.querySelector('.add-passport-missing-note');
+        passportMissingRadios.forEach(r => r.addEventListener('change', () => {
+            const v = group.querySelector('.add-passport-missing:checked').value;
+            if (v === 'نعم') {
+                passportMissingNote.parentElement.style.display = 'block';
+            } else {
+                passportMissingNote.parentElement.style.display = 'none';
+                passportMissingNote.value = '';
+            }
+        }));
     };
 
     if (document.getElementById('addRowBtn')) {
@@ -598,6 +762,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     office: group.querySelector('.add-office').value,
                     customer: group.querySelector('.add-customer').value,
                     national_id: group.querySelector('.add-id').value,
+                    mobile: group.querySelector('.add-mobile') ? group.querySelector('.add-mobile').value : '',
+                    receiver: group.querySelector('.add-receiver') ? group.querySelector('.add-receiver').value : '',
+                    receiver_other: group.querySelector('.add-receiver-other') ? group.querySelector('.add-receiver-other').value : '',
                     guarantee_status: group.querySelector('.add-guarantee').value,
                     housing_location: group.querySelector('.add-housing').value,
                     entry_date: group.querySelector('.add-entry').value,
@@ -607,15 +774,31 @@ document.addEventListener('DOMContentLoaded', () => {
                     action_type: group.querySelector('.add-action').value,
                     ticket_info: group.querySelector('.add-ticket').value,
                     settlement_status: group.querySelector('.add-settlement').value,
-                    financial_notes: group.querySelector('.add-notes').value
+                    financial_notes: group.querySelector('.add-notes').value,
+                    case_status: group.querySelector('.add-status') ? group.querySelector('.add-status').value : '' ,
+                    passport_missing: group.querySelector('.add-passport-missing:checked') ? group.querySelector('.add-passport-missing:checked').value : 'لا',
+                    passport_missing_note: group.querySelector('.add-passport-missing-note') ? group.querySelector('.add-passport-missing-note').value : ''
                 };
 
                 // Check mandatory fields (housing_entry_date is optional only if action_type is 'هروب')
-                const mandatoryFields = ['worker_name', 'passport', 'nationality', 'office', 'customer', 'national_id', 'guarantee_status', 'housing_location', 'entry_date', 'salary', 'status_description', 'action_type', 'ticket_info', 'settlement_status'];
+                const mandatoryFields = ['worker_name', 'nationality', 'office', 'customer', 'national_id', 'guarantee_status', 'housing_location', 'entry_date', 'salary', 'status_description', 'action_type', 'ticket_info', 'settlement_status'];
                 mandatoryFields.forEach(f => {
                     if (!rowData[f] || rowData[f] === '') allValid = false;
                 });
                 
+                // If passport is missing = 'نعم', passport can be empty but passport_missing_note must be provided
+                if (rowData.passport_missing === 'نعم') {
+                    if (!rowData.passport_missing_note || rowData.passport_missing_note.trim() === '') allValid = false;
+                } else {
+                    // passport required when not marked missing
+                    if (!rowData.passport || rowData.passport.trim() === '') allValid = false;
+                }
+
+                // If receiver is 'اخرى', receiver_other is required
+                if (rowData.receiver === 'اخرى' && (!rowData.receiver_other || rowData.receiver_other.trim() === '')) {
+                    allValid = false;
+                }
+
                 // housing_entry_date is required only if action_type is NOT 'هروب'
                 if (rowData.action_type !== 'هروب' && (!rowData.housing_entry_date || rowData.housing_entry_date === '')) {
                     allValid = false;
@@ -659,6 +842,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     id: group.dataset.id,
                     worker_name: group.querySelector('.edit-name').value,
                     passport: group.querySelector('.edit-passport').value,
+                    mobile: group.querySelector('.edit-mobile') ? group.querySelector('.edit-mobile').value : '',
+                    receiver: group.querySelector('.edit-receiver') ? group.querySelector('.edit-receiver').value : '',
+                    receiver_other: group.querySelector('.edit-receiver-other') ? group.querySelector('.edit-receiver-other').value : '',
                     nationality: group.querySelector('.edit-nat').value,
                     office: group.querySelector('.edit-office').value,
                     customer: group.querySelector('.edit-customer').value,
@@ -672,13 +858,29 @@ document.addEventListener('DOMContentLoaded', () => {
                     action_type: group.querySelector('.edit-action').value,
                     ticket_info: group.querySelector('.edit-ticket').value,
                     settlement_status: group.querySelector('.edit-settlement').value,
-                    financial_notes: group.querySelector('.edit-notes').value
+                    financial_notes: group.querySelector('.edit-notes').value,
+                    case_status: group.querySelector('.edit-status') ? group.querySelector('.edit-status').value : '',
+                    passport_missing: group.querySelector('.edit-passport-missing:checked') ? group.querySelector('.edit-passport-missing:checked').value : 'لا',
+                    passport_missing_note: group.querySelector('.edit-passport-missing-note') ? group.querySelector('.edit-passport-missing-note').value : ''
                 };
 
                 const mandatoryFields = ['worker_name', 'passport', 'nationality', 'office', 'customer', 'national_id', 'guarantee_status', 'housing_location', 'entry_date', 'salary', 'status_description', 'action_type', 'ticket_info', 'settlement_status'];
                 mandatoryFields.forEach(f => {
                     if (!rowData[f] || rowData[f] === '') allValid = false;
                 });
+
+                // If passport is missing = 'نعم', passport can be empty but passport_missing_note must be provided
+                if (rowData.passport_missing === 'نعم') {
+                    if (!rowData.passport_missing_note || rowData.passport_missing_note.trim() === '') allValid = false;
+                } else {
+                    // passport required when not marked missing
+                    if (!rowData.passport || rowData.passport.trim() === '') allValid = false;
+                }
+
+                // If receiver is 'اخرى', receiver_other is required
+                if (rowData.receiver === 'اخرى' && (!rowData.receiver_other || rowData.receiver_other.trim() === '')) {
+                    allValid = false;
+                }
 
                 // housing_entry_date is required only if action_type is NOT 'هروب'
                 if (rowData.action_type !== 'هروب' && (!rowData.housing_entry_date || rowData.housing_entry_date === '')) {

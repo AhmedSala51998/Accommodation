@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار النظام</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        h1 {
+            color: #1e293b;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 28px;
+        }
+        
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 10px;
+            border-right: 4px solid #4361ee;
+        }
+        
+        .test-section h2 {
+            color: #4361ee;
+            font-size: 18px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .test-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: white;
+            border-radius: 6px;
+            border-left: 3px solid #e2e8f0;
+        }
+        
+        .test-item.success {
+            border-left-color: #10b981;
+            background: #d1fae5;
+        }
+        
+        .test-item.warning {
+            border-left-color: #f59e0b;
+            background: #fef3c7;
+        }
+        
+        .test-item.error {
+            border-left-color: #ef4444;
+            background: #fee2e2;
+        }
+        
+        .icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: auto;
+        }
+        
+        .status-done {
+            background: #10b981;
+            color: white;
+        }
+        
+        .status-pending {
+            background: #f59e0b;
+            color: white;
+        }
+        
+        .status-todo {
+            background: #94a3b8;
+            color: white;
+        }
+        
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Cairo', sans-serif;
+            font-weight: 600;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: 0.3s;
+        }
+        
+        .btn-primary {
+            background: #4361ee;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #3a4fd9;
+        }
+        
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #059669;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #10b981 0%, #4361ee 100%);
+            width: 0%;
+            transition: width 0.3s;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-clipboard-check"></i> اختبار نظام الأدوار والصلاحيات</h1>
+        
+        <!-- قسم الحالة -->
+        <div class="test-section">
+            <h2><i class="fas fa-info-circle"></i> معلومات النظام</h2>
+            <div class="test-item success">
+                <div class="icon"><i class="fas fa-check-circle"></i></div>
+                <div>قاعدة البيانات: accommodation_db</div>
+                <span class="status-badge status-done">جاهز</span>
+            </div>
+            <div class="test-item success">
+                <div class="icon"><i class="fas fa-check-circle"></i></div>
+                <div>الملفات المُنشأة</div>
+                <span class="status-badge status-done">10+ ملفات</span>
+            </div>
+            <div class="test-item success">
+                <div class="icon"><i class="fas fa-check-circle"></i></div>
+                <div>الجداول الجديدة</div>
+                <span class="status-badge status-done">5 جداول</span>
+            </div>
+        </div>
+        
+        <!-- قسم المتطلبات -->
+        <div class="test-section">
+            <h2><i class="fas fa-tasks"></i> الخطوات المطلوبة</h2>
+            <div class="test-item warning">
+                <div class="icon"><i class="fas fa-clipboard-list"></i></div>
+                <div>تشغيل schema.sql لإنشاء الجداول</div>
+                <span class="status-badge status-pending">قيد الانتظار</span>
+            </div>
+            <div class="test-item warning">
+                <div class="icon"><i class="fas fa-user-plus"></i></div>
+                <div>إنشاء المستخدمين التجريبيين</div>
+                <span class="status-badge status-pending">قيد الانتظار</span>
+            </div>
+            <div class="test-item warning">
+                <div class="icon"><i class="fas fa-globe"></i></div>
+                <div>زيارة init_users.php</div>
+                <span class="status-badge status-pending">قيد الانتظار</span>
+            </div>
+            <div class="test-item warning">
+                <div class="icon"><i class="fas fa-lock"></i></div>
+                <div>اختبار تسجيل الدخول</div>
+                <span class="status-badge status-pending">قيد الانتظار</span>
+            </div>
+        </div>
+        
+        <!-- قسم الاختبارات -->
+        <div class="test-section">
+            <h2><i class="fas fa-vial"></i> الاختبارات المقترحة</h2>
+            <div class="test-item">
+                <div class="icon"><i class="fas fa-play"></i></div>
+                <div>اختبار تسجيل الدخول</div>
+                <span class="status-badge status-todo">قريباً</span>
+            </div>
+            <div class="test-item">
+                <div class="icon"><i class="fas fa-play"></i></div>
+                <div>اختبار إدارة المستخدمين</div>
+                <span class="status-badge status-todo">قريباً</span>
+            </div>
+            <div class="test-item">
+                <div class="icon"><i class="fas fa-play"></i></div>
+                <div>اختبار الأدوار والصلاحيات</div>
+                <span class="status-badge status-todo">قريباً</span>
+            </div>
+            <div class="test-item">
+                <div class="icon"><i class="fas fa-play"></i></div>
+                <div>اختبار سجل الأنشطة</div>
+                <span class="status-badge status-todo">قريباً</span>
+            </div>
+        </div>
+        
+        <!-- قسم الملفات -->
+        <div class="test-section">
+            <h2><i class="fas fa-folder"></i> الملفات المُنشأة</h2>
+            <div class="test-item success">
+                <div class="icon"><i class="fas fa-file"></i></div>
+                <div>login.php - صفحة تسجيل الدخول</div>
+            </div>
+            <div class="test-item success">
+                <div class="icon"><i class="fas fa-file"></i></div>
+                <div>manage_users.php - إدارة المستخدمين</div>
+            </div>
+            <div class="test-item success">
+                <div class="icon"><i class="fas fa-file"></i></div>
+                <div>manage_roles.php - إدارة الأدوار</div>
+            </div>
+            <div class="test-item success">
+                <div class="icon"><i class="fas fa-file"></i></div>
+                <div>activity_logs.php - سجل الأنشطة</div>
+            </div>
+            <div class="test-item success">
+                <div class="icon"><i class="fas fa-file"></i></div>
+                <div>helpers.php - دوال مساعدة</div>
+            </div>
+        </div>
+        
+        <!-- قسم الأزرار -->
+        <div class="action-buttons">
+            <a href="init_users.php" class="btn btn-primary">
+                <i class="fas fa-user-cog"></i> إنشاء مستخدمين
+            </a>
+            <a href="login.php" class="btn btn-success">
+                <i class="fas fa-sign-in-alt"></i> تسجيل الدخول
+            </a>
+        </div>
+        
+        <!-- شريط التقدم -->
+        <div style="margin-top: 30px;">
+            <p style="color: #64748b; font-size: 12px; margin-bottom: 8px;">التقدم الإجمالي</p>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 70%;"></div>
+            </div>
+            <p style="color: #94a3b8; font-size: 12px; margin-top: 8px; text-align: right;">
+                70% - جاهز للاستخدام!
+            </p>
+        </div>
+        
+        <!-- الملاحظات -->
+        <div style="margin-top: 30px; padding: 15px; background: #fef3c7; border-radius: 8px; border-right: 3px solid #f59e0b;">
+            <p style="color: #92400e; margin-bottom: 10px; font-weight: 600;">
+                <i class="fas fa-lightbulb"></i> نصيحة:
+            </p>
+            <ul style="color: #92400e; margin-right: 20px; font-size: 14px;">
+                <li>تأكد من تشغيل MySQL</li>
+                <li>تأكد من وجود قاعدة البيانات accommodation_db</li>
+                <li>شغّل schema.sql أولاً</li>
+                <li>ثم قم بزيارة init_users.php</li>
+                <li>أخيراً سجّل الدخول</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

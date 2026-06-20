@@ -1,3 +1,30 @@
+<?php
+session_start();
+require_once 'helpers.php';
+require_once 'config.php';
+
+// التحقق من تسجيل الدخول
+requireLogin();
+requirePermission('view_workers', $pdo);
+
+$current_user = getUserInfo($_SESSION['user_id'], $pdo);
+
+// عد العاملات حسب الفرع
+$branchCounts = [];
+try {
+    $stmt = $pdo->query("SELECT housing_location, COUNT(*) as cnt FROM workers WHERE is_archived = 0 GROUP BY housing_location");
+    while ($row = $stmt->fetch()) {
+        $branchCounts[$row['housing_location']] = $row['cnt'];
+    }
+} catch (Exception $e) {
+    // ignore
+}
+$yanbuCount = isset($branchCounts['ينبع']) ? $branchCounts['ينبع'] : 0;
+$jeddahCount = isset($branchCounts['جدة']) ? $branchCounts['جدة'] : 0;
+$riyadhCount = isset($branchCounts['الرياض']) ? $branchCounts['الرياض'] : 0;
+$totalCount = $yanbuCount + $jeddahCount + $riyadhCount;
+?>
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 
@@ -100,10 +127,279 @@
             box-shadow: 0 0 0 4px rgba(67, 97, 238, 0.15) !important;
             transform: translateY(-1px);
         }
+
+        /* User Info Bar */
+        .user-info-bar {
+            background: linear-gradient(135deg, #4361ee 0%, #5b7cfa 100%);
+            color: white;
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            margin-bottom: 10px;
+            margin-top:20px !important;
+            border-radius: 15px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-right:25px;
+            margin-left:25px
+        }
+
+        .user-info-bar a {
+            color: white;
+            text-decoration: none;
+            margin-left: 10px;
+            padding: 5px 12px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            transition: 0.3s;
+            cursor: pointer;
+            border: none;
+            font-weight: 600;
+        }
+
+        .user-info-bar a:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .user-info-bar .left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-info-bar .right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        
+
+        .user-info-bar {
+    background: #1e293b;
+    color: #fff;
+    padding: 12px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.user-info-bar .left,
+.user-info-bar .right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.user-info-bar .right a {
+    color: #fff;
+    text-decoration: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: .3s;
+    white-space: nowrap;
+}
+
+.user-info-bar .right a:hover {
+    background: rgba(255,255,255,0.15);
+}
+
+.mobile-menu-btn {
+    display: none;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 22px;
+    cursor: pointer;
+}
+
+/* Branch Counters */
+.branch-counters {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.branch-counter-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(255,255,255,0.12);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+    transition: 0.3s;
+    border: 1px solid rgba(255,255,255,0.15);
+}
+
+.branch-counter-item:hover {
+    background: rgba(255,255,255,0.2);
+    transform: translateY(-1px);
+}
+
+.branch-counter-item .counter-icon {
+    font-size: 13px;
+}
+
+.branch-counter-item .counter-label {
+    color: rgba(255,255,255,0.85);
+}
+
+.branch-counter-item .counter-value {
+    background: rgba(255,255,255,0.25);
+    padding: 1px 8px;
+    border-radius: 10px;
+    font-weight: 800;
+    font-size: 13px;
+    min-width: 28px;
+    text-align: center;
+}
+
+.branch-counter-total {
+    background: rgba(67, 97, 238, 0.5);
+    border: 1px solid rgba(67, 97, 238, 0.7);
+}
+
+.branch-counter-total .counter-value {
+    background: rgba(67, 97, 238, 0.7);
+}
+
+@media (max-width: 768px) {
+    .branch-counters {
+        width: 100%;
+        justify-content: center;
+        margin-top: 8px;
+    }
+    .branch-counter-item {
+        font-size: 11px;
+        padding: 3px 8px;
+    }
+}
+
+/* Responsive */
+
+@media (max-width: 768px) {
+
+    .user-info-bar {
+        padding: 10px 15px;
+    }
+
+    .user-info-bar .left {
+        width: 100%;
+        justify-content: center;
+        text-align: center;
+        flex-wrap: wrap;
+    }
+
+    .mobile-menu-btn {
+        display: block;
+    }
+
+    .user-info-bar .right {
+        width: 100%;
+        display: none;
+        flex-direction: column;
+        align-items: stretch;
+        margin-top: 10px;
+        gap: 5px;
+    }
+
+    .user-info-bar .right.show {
+        display: flex;
+    }
+
+    .user-info-bar .right a {
+        width: 100%;
+        text-align: center;
+        padding: 12px;
+        background: rgba(255,255,255,0.08);
+    }
+}
     </style>
 </head>
 
 <body>
+    <!-- شريط معلومات المستخدم -->
+<div class="user-info-bar">
+
+    <div class="left">
+        <span>
+            <i class="fas fa-user-circle"></i>
+            <?php echo htmlspecialchars($current_user['full_name']); ?>
+        </span>
+
+        <span style="background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 700;">
+            <?php echo htmlspecialchars($current_user['role_name']); ?>
+        </span>
+    </div>
+
+    <!-- عدادات الفروع -->
+    <div class="branch-counters">
+        <div class="branch-counter-item">
+            <i class="fas fa-building counter-icon" style="color: #60a5fa;"></i>
+            <span class="counter-label">ينبع:</span>
+            <span class="counter-value"><?php echo $yanbuCount; ?></span>
+        </div>
+        <div class="branch-counter-item">
+            <i class="fas fa-city counter-icon" style="color: #f472b6;"></i>
+            <span class="counter-label">جدة:</span>
+            <span class="counter-value"><?php echo $jeddahCount; ?></span>
+        </div>
+        <div class="branch-counter-item">
+            <i class="fas fa-landmark counter-icon" style="color: #a78bfa;"></i>
+            <span class="counter-label">الرياض:</span>
+            <span class="counter-value"><?php echo $riyadhCount; ?></span>
+        </div>
+        <div class="branch-counter-item branch-counter-total">
+            <i class="fas fa-users counter-icon" style="color: #fff;"></i>
+            <span class="counter-label">الإجمالي:</span>
+            <span class="counter-value"><?php echo $totalCount; ?></span>
+        </div>
+    </div>
+
+    <button class="mobile-menu-btn" onclick="toggleUserMenu()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="right" id="userMenu">
+
+        <?php if (hasPermission('view_users', $pdo)): ?>
+            <a href="manage_users.php">
+                <i class="fas fa-users"></i>
+                المستخدمين
+            </a>
+        <?php endif; ?>
+
+        <?php if (hasPermission('view_roles', $pdo)): ?>
+            <a href="manage_roles.php">
+                <i class="fas fa-shield-alt"></i>
+                الأدوار
+            </a>
+        <?php endif; ?>
+
+        <?php if (hasPermission('view_activity_logs', $pdo)): ?>
+            <a href="activity_logs.php">
+                <i class="fas fa-history"></i>
+                السجلات
+            </a>
+        <?php endif; ?>
+
+        <a href="logout.php">
+            <i class="fas fa-sign-out-alt"></i>
+            تسجيل خروج
+        </a>
+
+    </div>
+
+</div>
+
     <div class="dashboard-container">
         <header>
             <div class="header-content" style="flex-direction: column; align-items: stretch; gap: 0;">
@@ -111,18 +407,37 @@
                 <div class="header-row-1">
                     <h1>إدارة سكن العاملات</h1>
                     <div class="header-nav">
-                        <button id="manageOfficesBtn" class="btn btn-secondary"><i class="fas fa-building"></i> إدارة المكاتب</button>
-                        <a href="archive.php" class="btn btn-success"><i class="fas fa-box-open"></i> الأرشيف</a>
-                        <a href="all_workers.php" class="btn btn-success" style="background: #3f37c9; color: white; border-color: #3f37c9;"><i class="fas fa-users"></i> تقرير شامل للعاملات</a>
+                        <?php if (hasPermission('view_offices', $pdo)): ?>
+                            <button id="manageOfficesBtn" class="btn btn-secondary"><i class="fas fa-building"></i> إدارة المكاتب</button>
+                        <?php endif; ?>
+                        <?php if (hasPermission('view_archive', $pdo)): ?>
+                            <a href="archive.php" class="btn btn-success"><i class="fas fa-box-open"></i> الأرشيف</a>
+                        <?php endif; ?>
+                        <?php if (hasPermission('view_all_workers_report', $pdo)): ?>
+                            <a href="all_workers.php" class="btn btn-success" style="background: #3f37c9; color: white; border-color: #3f37c9;"><i class="fas fa-users"></i> تقرير شامل للعاملات</a>
+                        <?php endif; ?>
+                        <?php if (hasPermission('view_admin_report', $pdo)): ?>
+                            <a href="admin_report.php" class="btn btn-info" style="background:#0ea5a4; color:white; border-color:#0ea5a4;"><i class="fas fa-file-alt"></i> تقرير إداري</a>
+                        <?php endif; ?>
                     </div>
                 </div>
                 <!-- Row 2: Action Buttons -->
                 <div class="header-row-2">
-                    <button class="btn btn-success" onclick="excelImporter.openModal()"><i class="fas fa-file-excel"></i> استيراد Excel</button>
-                    <button id="bulkAddBtn" class="btn btn-primary"><i class="fas fa-plus-circle"></i> إضافة </button>
-                    <button id="bulkEditBtn" class="btn btn-warning" disabled><i class="fas fa-edit"></i> تعديل محدد</button>
-                    <button id="bulkDeleteBtn" class="btn btn-danger" disabled><i class="fas fa-trash"></i> حذف محدد</button>
-                    <button id="bulkArchiveBtn" class="btn btn-secondary" disabled><i class="fas fa-archive"></i> أرشفة المحدد</button>
+                    <?php if (hasPermission('import_workers', $pdo)): ?>
+                        <button class="btn btn-success" onclick="excelImporter.openModal()"><i class="fas fa-file-excel"></i> استيراد Excel</button>
+                    <?php endif; ?>
+                    <?php if (hasPermission('add_worker', $pdo)): ?>
+                        <button id="bulkAddBtn" class="btn btn-primary"><i class="fas fa-plus-circle"></i> إضافة </button>
+                    <?php endif; ?>
+                    <?php if (hasPermission('edit_worker', $pdo)): ?>
+                        <button id="bulkEditBtn" class="btn btn-warning" disabled><i class="fas fa-edit"></i> تعديل محدد</button>
+                    <?php endif; ?>
+                    <?php if (hasPermission('delete_worker', $pdo)): ?>
+                        <button id="bulkDeleteBtn" class="btn btn-danger" disabled><i class="fas fa-trash"></i> حذف محدد</button>
+                    <?php endif; ?>
+                    <?php if (hasPermission('archive_worker', $pdo)): ?>
+                        <button id="bulkArchiveBtn" class="btn btn-secondary" disabled><i class="fas fa-archive"></i> أرشفة المحدد</button>
+                    <?php endif; ?>
                     <div class="range-selector" style="display: flex; align-items: center; gap: 4px; background: rgba(255,255,255,0.15); padding: 4px 8px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.2);">
                         <span style="font-size: 11px; font-weight: bold; color: white;">من:</span>
                         <input type="number" id="rangeFrom" min="1" style="width: 45px; height: 28px; border-radius: 6px; border: none; text-align: center; font-size: 12px; font-weight: bold;">
@@ -130,8 +445,10 @@
                         <input type="number" id="rangeTo" min="1" style="width: 45px; height: 28px; border-radius: 6px; border: none; text-align: center; font-size: 12px; font-weight: bold;">
                         <button id="applyRangeSelect" style="display:none;"></button>
                     </div>
-                    <button id="exportExcelBtn" class="btn btn-success"><i class="fas fa-file-excel"></i> تصدير Excel</button>
-                    <button id="exportPdfBtn" class="btn btn-success"><i class="fas fa-file-pdf"></i> تصدير PDF</button>
+                    <?php if (hasPermission('export_workers', $pdo)): ?>
+                        <button id="exportExcelBtn" class="btn btn-success"><i class="fas fa-file-excel"></i> تصدير Excel</button>
+                        <button id="exportPdfBtn" class="btn btn-success"><i class="fas fa-file-pdf"></i> تصدير PDF</button>
+                    <?php endif; ?>
                 </div>
             </div>
         </header>
@@ -441,6 +758,11 @@
     <script src="assets/js/app.js?v=1.6"></script>
     <!-- Standalone Excel Script (Force Refresh) -->
     <script src="assets/js/excel_importer.js?v=1.4"></script>
+    <script>
+function toggleUserMenu() {
+    document.getElementById('userMenu').classList.toggle('show');
+}
+</script>
 </body>
 
 </html>
