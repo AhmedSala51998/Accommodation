@@ -241,9 +241,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td><span class="badge ${row.guarantee_status === 'داخل الضمان' ? 'badge-success' : 'badge-danger'}">${row.guarantee_status}</span></td>
                     <td>${row.housing_location || ''}</td>
                     <td>${row.entry_date || ''}</td>
-                    <td>${row.days_in_ksa || 0}</td>
+                    <td class="${row.days_in_ksa >= 70 ? 'warning-bg' : ''}">${row.days_in_ksa || 0}</td>
                     <td>${row.housing_entry_date || ''}</td>
-                    <td>${row.days_in_housing || 0}</td>
+                    <td class="${row.days_in_housing >= 15 ? 'danger-bg' : row.days_in_housing >= 10 ? 'warning-bg' : ''}">${row.days_in_housing || 0}</td>
                     <td>${row.mobile || ''}</td>
                     <td>${row.receiver || ''}</td>
                     <td>${row.receiver_other || ''}</td>
@@ -274,9 +274,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td><span class="badge ${row.guarantee_status === 'داخل الضمان' ? 'badge-success' : 'badge-danger'}">${row.guarantee_status}</span></td>
                     <td>${row.housing_location || ''}</td>
                     <td>${row.entry_date || ''}</td>
-                    <td>${row.days_in_ksa || 0}</td>
+                    <td class="${row.days_in_ksa >= 70 ? 'warning-bg' : ''}">${row.days_in_ksa || 0}</td>
                     <td>${row.housing_entry_date || ''}</td>
-                    <td>${row.days_in_housing || 0}</td>
+                    <td class="${row.days_in_housing >= 15 ? 'danger-bg' : row.days_in_housing >= 10 ? 'warning-bg' : ''}">${row.days_in_housing || 0}</td>
                     <td>${parseFloat(row.salary).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
                     <td>${row.action_type || ''}</td>
                     <td>${row.ticket_info || ''}</td>

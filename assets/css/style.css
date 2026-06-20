@@ -1,3 +1,14 @@
+/* Warning and Danger Backgrounds */
+.warning-bg {
+    background-color: #fef3c7;
+    font-weight: bold;
+}
+
+.danger-bg {
+    background-color: #fee2e2;
+    font-weight: bold;
+}
+
 :root {
     --primary-color: #4361ee;
     --secondary-color: #3f37c9;
