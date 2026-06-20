@@ -807,6 +807,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 return rowData;
             }).filter(r => r.worker_name);
 
+            // Check for duplicate passport numbers in the database
+            for (const row of data) {
+                if (row.passport && row.passport.trim() !== '') {
+                    try {
+                        const response = await fetch(`api.php?action=check_passport&passport=${encodeURIComponent(row.passport)}`);
+                        const result = await response.json();
+                        if (result.exists) {
+                            showToast(`رقم الجواز ${row.passport} مسجل بالفعل في النظام`, 'error');
+                            return;
+                        }
+                    } catch (e) {
+                        console.error('Error checking passport:', e);
+                    }
+                }
+            }
+            
             if (!allValid) return showToast('يرجى تعبئة جميع الحقول الإلزامية لكل عاملة', 'error');
             if (data.length === 0) return showToast('الرجاء تعبئة بيانات عاملة واحدة على الأقل', 'error');
 
@@ -890,6 +906,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 return rowData;
             });
 
+            // Check for duplicate passport numbers in the database (excluding current record)
+            for (const row of data) {
+                if (row.passport && row.passport.trim() !== '') {
+                    try {
+                        const response = await fetch(`api.php?action=check_passport&passport=${encodeURIComponent(row.passport)}&exclude_id=${row.id}`);
+                        const result = await response.json();
+                        if (result.exists) {
+                            showToast(`رقم الجواز ${row.passport} مسجل بالفعل في النظام`, 'error');
+                            return;
+                        }
+                    } catch (e) {
+                        console.error('Error checking passport:', e);
+                    }
+                }
+            }
+            
             if (!allValid) return showToast('يرجى التأكد من تعبئة جميع الحقول لكل عاملة مختارة', 'error');
 
             try {

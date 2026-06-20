@@ -328,6 +328,38 @@ switch ($action) {
         }
         break;
 
+    case 'check_passport':
+        try {
+            if (!hasPermission('add_worker', $pdo) && !hasPermission('edit_worker', $pdo)) {
+                throw new Exception('Permission denied');
+            }
+            
+            $passport = $_GET['passport'] ?? '';
+            $exclude_id = $_GET['exclude_id'] ?? null;
+            
+            if (empty($passport)) {
+                echo json_encode(['exists' => false]);
+                break;
+            }
+            
+            $sql = "SELECT id FROM workers WHERE passport = ?";
+            $params = [$passport];
+            
+            if ($exclude_id) {
+                $sql .= " AND id != ?";
+                $params[] = $exclude_id;
+            }
+            
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute($params);
+            $exists = $stmt->fetch() !== false;
+            
+            echo json_encode(['exists' => $exists]);
+        } catch (Exception $e) {
+            echo json_encode(['error' => $e->getMessage()]);
+        }
+        break;
+        
     default:
         echo json_encode(['error' => 'Invalid action']);
         break;
