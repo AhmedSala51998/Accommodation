@@ -125,6 +125,9 @@ switch ($action) {
             echo json_encode(['success' => false, 'message' => 'Permission denied']);
             break;
         }
+        
+        // التحقق من صلاحية تعديل حالة التسوية
+        $can_edit_settlement = hasPermission('edit_settlement', $pdo);
 
         $data = json_decode(file_get_contents('php://input'), true);
         if (!$data || !is_array($data)) {
@@ -144,6 +147,14 @@ switch ($action) {
 
             $affectedCount = 0;
             foreach ($data as $row) {
+                // الحصول على القيمة الحالية لحالة التسوية إذا لم يكن للمستخدم صلاحية التعديل
+                if (!$can_edit_settlement) {
+                    $stmt_old = $pdo->prepare("SELECT settlement_status FROM workers WHERE id = ?");
+                    $stmt_old->execute([$row['id']]);
+                    $old_worker = $stmt_old->fetch();
+                    $current_settlement = $old_worker['settlement_status'] ?? 'لم يتم الخصم';
+                }
+                
                 $stmt->execute([
                     $row['worker_name'] ?? '',
                     $row['passport'] ?? '',
@@ -159,15 +170,15 @@ switch ($action) {
                     $row['status_description'] ?? '',
                     $row['action_type'] ?? 'السكن',
                     $row['ticket_info'] ?? '',
-                        $row['settlement_status'] ?? 'لم يتم الخصم',
-                        $row['financial_notes'] ?? '',
-                        $row['mobile'] ?? null,
-                        $row['receiver'] ?? null,
-                        $row['receiver_other'] ?? null,
-                        $row['passport_missing'] ?? 'لا',
-                        $row['passport_missing_note'] ?? null,
-                        $row['case_status'] ?? null,
-                        $row['id']
+                    ($can_edit_settlement ? ($row['settlement_status'] ?? 'لم يتم الخصم') : $current_settlement),
+                    $row['financial_notes'] ?? '',
+                    $row['mobile'] ?? null,
+                    $row['receiver'] ?? null,
+                    $row['receiver_other'] ?? null,
+                    $row['passport_missing'] ?? 'لا',
+                    $row['passport_missing_note'] ?? null,
+                    $row['case_status'] ?? null,
+                    $row['id']
                 ]);
                 logActivity($_SESSION['user_id'], 'EDIT', 'workers', $row['id'], null, $row, "تعديل بيانات عاملة: {$row['worker_name']}", $pdo);
                 $affectedCount += $stmt->rowCount();

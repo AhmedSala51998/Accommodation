@@ -1,4 +1,31 @@
+// التحقق من صلاحية تعديل حالة التسوية
+// سيتم تعيين هذه القيمة عند تحميل الصفحة
+let canEditSettlement = false;
+
+// دالة للتحقق من صلاحية تعديل حالة التسوية
+async function checkSettlementPermission() {
+    try {
+        const response = await fetch('check_settlement_permission.php', { credentials: 'include' });
+        if (response.ok) {
+            const data = await response.json();
+            canEditSettlement = data.hasPermission;
+            return canEditSettlement;
+        }
+    } catch (e) {
+        console.error('Error checking settlement permission:', e);
+    }
+    return false;
+}
+
+// دالة للتحقق من الصلاحية (تعيد القيمة المحفوظة)
+document.hasEditSettlementPermission = function() {
+    return canEditSettlement;
+};
+
+// تحقق من صلاحية تعديل حالة التسوية عند تحميل الصفحة
 document.addEventListener('DOMContentLoaded', () => {
+    // التحقق من صلاحية تعديل حالة التسوية
+    checkSettlementPermission();
     let allWorkers = [];
     let allOffices = [];
     const isArchivePage = typeof PAGE_TYPE !== 'undefined' && PAGE_TYPE === 'archive';
@@ -517,7 +544,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="field"><label>الإجراء</label><select class="edit-action" required>${actionOptions.replace(`value="${w.action_type}"`, `value="${w.action_type}" selected`)}</select></div>
                         <div class="field"><label>الحالة</label><input type="text" class="edit-status" value="${w.case_status || ''}" placeholder="الحالة"></div>
                         <div class="field"><label>التذكرة</label><input type="text" class="edit-ticket" value="${w.ticket_info || ''}" required></div>
-                        <div class="field"><label>التسوية</label><select class="edit-settlement" required>${settlementOptions.replace(`value="${w.settlement_status}"`, `value="${w.settlement_status}" selected`)}</select></div>
+                        <div class="field" style="display: block !important; visibility: visible !important;"><label>التسوية</label><select class="edit-settlement" required ${!document.hasEditSettlementPermission() ? 'disabled' : ''}>${settlementOptions.replace(`value="${w.settlement_status}"`, `value="${w.settlement_status}" selected`)}</select></div>
                         <div class="field" style="display:flex; align-items:center; gap:8px;">
                             <label style="min-width:140px;">الجواز مفقود؟</label>
                             <label><input type="radio" name="edit_passport_missing_${w.id}" class="edit-passport-missing" value="لا" ${w.passport_missing !== 'نعم' ? 'checked' : ''}> لا</label>

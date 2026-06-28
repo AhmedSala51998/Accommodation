@@ -171,6 +171,41 @@ $permissions_by_module = [];
 foreach ($all_permissions as $perm) {
     $permissions_by_module[$perm['module']][] = $perm;
 }
+
+// التأكد من وجود صلاحية تعديل حالة التسوية
+$settlement_permission_exists = false;
+foreach ($all_permissions as $perm) {
+    if ($perm['permission_name'] === 'edit_settlement') {
+        $settlement_permission_exists = true;
+        break;
+    }
+}
+
+// إذا لم توجد الصلاحية، أضفها
+if (!$settlement_permission_exists) {
+    try {
+        $stmt = $pdo->prepare('INSERT INTO permissions (permission_name, description, module) VALUES (?, ?, ?)');
+        $stmt->execute(['edit_settlement', 'تعديل حالة التسوية', 'workers']);
+        $new_permission_id = $pdo->lastInsertId();
+        
+        // أضف الصلاحية لدور مدير النظام
+        $stmt = $pdo->prepare('INSERT INTO role_permissions (role_id, permission_id) VALUES (?, ?)');
+        $stmt->execute([1, $new_permission_id]);
+        
+        // تحديث قائمة الصلاحيات
+        $stmt = $pdo->prepare('SELECT id, permission_name, module, description FROM permissions ORDER BY module, permission_name');
+        $stmt->execute();
+        $all_permissions = $stmt->fetchAll();
+        
+        // تجميع الصلاحيات حسب الوحدة
+        $permissions_by_module = [];
+        foreach ($all_permissions as $perm) {
+            $permissions_by_module[$perm['module']][] = $perm;
+        }
+    } catch (Exception $e) {
+        // خطأ في إضافة الصلاحية، استمر بالعمل بالصلاحيات الحالية
+    }
+}
 ?>
 
 <!DOCTYPE html>

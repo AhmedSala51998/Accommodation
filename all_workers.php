@@ -322,6 +322,8 @@
             <div class="modal-footer"><button id="saveBulkEdit" class="btn btn-warning">حفظ التعديلات</button></div>
         </div>
     </div>
+    
+
 
     <div id="officesModal" class="modal">
         <div class="modal-content large" style="max-width: 1000px;">

@@ -105,6 +105,7 @@ INSERT IGNORE INTO permissions (permission_name, description, module) VALUES
 ('export_workers', 'تصدير بيانات العاملات', 'workers'),
 ('import_workers', 'استيراد العاملات من Excel', 'workers'),
 ('view_worker_logs', 'عرض سجل أنشطة العاملة', 'workers'),
+('edit_settlement', 'تعديل حالة التسوية', 'workers'),
 
 -- صلاحيات المكاتب
 ('view_offices', 'عرض المكاتب', 'offices'),
