@@ -682,7 +682,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="field"><label>الإجراء</label><select class="add-action" required>${actionOptions}</select></div>
                 <div class="field"><label>الحالة</label><input type="text" class="add-status" placeholder="الحالة"></div>
                 <div class="field"><label>التذكرة</label><input type="text" class="add-ticket" required placeholder="التذكرة"></div>
-                <div class="field"><label>التسوية</label><select class="add-settlement" required>${settlementOptions}</select></div>
+                <div class="field"><label>التسوية</label><select class="add-settlement" required disabled><option value="لم يتم الخصم" selected>لم يتم الخصم</option></select></div>
                 <div class="field"><label>ملاحظات</label><input type="text" class="add-notes" placeholder="ملاحظات مالية"></div>
                 <div class="field" style="display:flex; align-items:center; gap:8px;">
                     <label style="min-width:140px;">الجواز مفقود؟</label>
