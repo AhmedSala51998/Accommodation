@@ -10,19 +10,66 @@ requirePermission('view_workers', $pdo);
 $current_user = getUserInfo($_SESSION['user_id'], $pdo);
 
 // عد العاملات حسب الفرع
-$branchCounts = [];
+$housingCounts = [
+    'ينبع' => 0,
+    'جدة' => 0,
+    'الرياض' => 0
+];
+
+$transferCounts = [
+    'ينبع' => 0,
+    'جدة' => 0,
+    'الرياض' => 0
+];
+
 try {
-    $stmt = $pdo->query("SELECT housing_location, COUNT(*) as cnt FROM workers WHERE is_archived = 0 GROUP BY housing_location");
-    while ($row = $stmt->fetch()) {
-        $branchCounts[$row['housing_location']] = $row['cnt'];
+
+    // السكن فقط
+    $stmt = $pdo->query("
+        SELECT housing_location, COUNT(*) cnt
+        FROM workers
+        WHERE is_archived = 0
+        AND action_type != 'نقل خدمات'
+        GROUP BY housing_location
+    ");
+
+    while($row = $stmt->fetch()){
+        $housingCounts[$row['housing_location']] = $row['cnt'];
     }
-} catch (Exception $e) {
-    // ignore
-}
-$yanbuCount = isset($branchCounts['ينبع']) ? $branchCounts['ينبع'] : 0;
-$jeddahCount = isset($branchCounts['جدة']) ? $branchCounts['جدة'] : 0;
-$riyadhCount = isset($branchCounts['الرياض']) ? $branchCounts['الرياض'] : 0;
-$totalCount = $yanbuCount + $jeddahCount + $riyadhCount;
+
+    // نقل الخدمات فقط
+    $stmt = $pdo->query("
+        SELECT housing_location, COUNT(*) cnt
+        FROM workers
+        WHERE is_archived = 0
+        AND action_type = 'نقل خدمات'
+        GROUP BY housing_location
+    ");
+
+    while($row = $stmt->fetch()){
+        $transferCounts[$row['housing_location']] = $row['cnt'];
+    }
+
+} catch(Exception $e){}
+
+$yanbuCount = $housingCounts['ينبع'];
+$jeddahCount = $housingCounts['جدة'];
+$riyadhCount = $housingCounts['الرياض'];
+
+$yanbuTransfer = $transferCounts['ينبع'];
+$jeddahTransfer = $transferCounts['جدة'];
+$riyadhTransfer = $transferCounts['الرياض'];
+
+$totalTransfer =
+    $yanbuTransfer +
+    $jeddahTransfer +
+    $riyadhTransfer;
+
+$totalCount =
+    $yanbuCount +
+    $jeddahCount +
+    $riyadhCount +
+    $totalTransfer;
 ?>
 
 <!DOCTYPE html>
@@ -322,6 +369,303 @@ $totalCount = $yanbuCount + $jeddahCount + $riyadhCount;
         background: rgba(255,255,255,0.08);
     }
 }
+
+
+
+.branch-tree{
+    display:flex;
+    gap:25px;
+    justify-content:center;
+    align-items:flex-start;
+    flex-wrap:wrap;
+}
+
+.branch-node{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    position:relative;
+}
+
+.transfer-node{
+    margin-top:18px;
+    position:relative;
+
+    display:flex;
+    align-items:center;
+    gap:5px;
+    background:rgba(245,158,11,.15);
+    padding:4px 12px;
+    border-radius:20px;
+    font-size:12px;
+    font-weight:700;
+    border:1px solid rgba(245,158,11,.3);
+}
+
+.transfer-node::before{
+    content:'';
+    position:absolute;
+    width:2px;
+    height:18px;
+    background:#94a3b8;
+    top:-18px;
+    left:50%;
+    transform:translateX(-50%);
+}
+
+.tree-connector{
+    width:320px;
+    height:25px;
+    margin:0 auto;
+    border-top:2px solid #94a3b8;
+    border-left:2px solid #94a3b8;
+    border-right:2px solid #94a3b8;
+    border-radius:10px 10px 0 0;
+}
+
+.transfer-total{
+    margin:0 auto;
+    width:fit-content;
+    background:rgba(245,158,11,.2);
+    border:1px solid rgba(245,158,11,.4);
+}
+
+.tree-down{
+    width:2px;
+    height:20px;
+    background:#94a3b8;
+    margin:0 auto;
+}
+
+
+
+.knockout-tree{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:40px;
+}
+
+.round{
+    display:flex;
+    flex-direction:column;
+}
+
+.round1{
+    gap:28px;
+}
+
+.round2{
+    gap:28px;
+}
+
+.match-card{
+    position:relative;
+}
+
+/* خطوط من الفروع إلى نقل الخدمات */
+
+.round1 .match-card::after{
+    content:'';
+    position:absolute;
+    top:50%;
+    left:-40px;
+    width:40px;
+    height:2px;
+    background:#94a3b8;
+}
+
+/* خطوط من نقل الخدمات لإجمالي النقل */
+
+.round2 .match-card::after{
+    content:'';
+    position:absolute;
+    top:50%;
+    left:-40px;
+    width:40px;
+    height:2px;
+    background:#94a3b8;
+}
+
+.round2{
+    position:relative;
+}
+
+.round2::before{
+    content:'';
+    position:absolute;
+    left:-40px;
+    top:20px;
+    bottom:20px;
+    width:2px;
+    background:#94a3b8;
+}
+
+.round3{
+    position:relative;
+}
+
+.round3::before{
+    content:'';
+    position:absolute;
+    left:-40px;
+    top:50%;
+    width:40px;
+    height:2px;
+    background:#94a3b8;
+}
+
+/* من إجمالي النقل للإجمالي */
+
+.round4{
+    position:relative;
+}
+
+.round4::before{
+    content:'';
+    position:absolute;
+    left:-40px;
+    top:50%;
+    width:40px;
+    height:2px;
+    background:#94a3b8;
+}
+
+.transfer-total{
+    background:rgba(245,158,11,.15);
+    border:1px solid rgba(245,158,11,.35);
+}
+
+
+.transfer-node{
+    display:flex;
+    align-items:center;
+    gap:5px;
+
+    background:rgba(255,255,255,0.12);
+    padding:4px 12px;
+    border-radius:20px;
+
+    font-size:12px;
+    font-weight:700;
+    white-space:nowrap;
+
+    transition:.3s;
+    border:1px solid rgba(255,255,255,0.15);
+
+    margin-top:18px;
+    position:relative;
+}
+
+.transfer-node:hover{
+    background:rgba(255,255,255,0.2);
+    transform:translateY(-1px);
+}
+
+.transfer-node .counter-value{
+    background:rgba(255,255,255,0.25);
+    padding:1px 8px;
+    border-radius:10px;
+    font-weight:800;
+    font-size:13px;
+    min-width:28px;
+    text-align:center;
+}
+
+/* =========================
+   Mobile Knockout Tree
+========================= */
+@media (max-width:768px){
+
+    .knockout-tree{
+        flex-direction:column;
+        align-items:center;
+        gap:15px;
+        width:100%;
+    }
+
+    .round{
+        width:100%;
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        gap:10px;
+        position:relative;
+    }
+
+    /* إزالة خطوط الديسكتوب */
+    .round1 .match-card::after,
+    .round2 .match-card::after,
+    .round2::before,
+    .round3::before,
+    .round4::before{
+        display:none !important;
+    }
+
+    /* حجم الكروت */
+    .branch-counter-item,
+    .transfer-node{
+        min-width:220px;
+        justify-content:center;
+        margin:0 !important;
+    }
+
+    /* خطوط الفروع */
+    .round1 .match-card{
+        position:relative;
+    }
+
+    .round1 .match-card::before{
+        content:'';
+        position:absolute;
+        left:50%;
+        transform:translateX(-50%);
+        top:100%;
+        width:2px;
+        height:15px;
+        background:#94a3b8;
+    }
+
+    /* خطوط نقل الخدمات */
+    .round:nth-child(2) .match-card{
+        position:relative;
+    }
+
+    .round:nth-child(2) .match-card::after{
+        content:'';
+        position:absolute;
+        left:50%;
+        transform:translateX(-50%);
+        top:100%;
+        width:2px;
+        height:15px;
+        background:#94a3b8;
+        display:block !important;
+    }
+
+    /* إجمالي نقل الخدمات */
+    .transfer-total{
+        position:relative;
+        margin:10px 0 !important;
+    }
+
+    .transfer-total::after{
+        content:'';
+        position:absolute;
+        left:50%;
+        transform:translateX(-50%);
+        top:100%;
+        width:2px;
+        height:18px;
+        background:#94a3b8;
+    }
+
+    /* الإجمالي */
+    .branch-counter-total{
+        margin-top:18px !important;
+    }
+
+}
     </style>
 </head>
 
@@ -341,29 +685,78 @@ $totalCount = $yanbuCount + $jeddahCount + $riyadhCount;
     </div>
 
     <!-- عدادات الفروع -->
-    <div class="branch-counters">
-        <div class="branch-counter-item">
-            <i class="fas fa-building counter-icon" style="color: #60a5fa;"></i>
-            <span class="counter-label">ينبع:</span>
-            <span class="counter-value"><?php echo $yanbuCount; ?></span>
-        </div>
-        <div class="branch-counter-item">
-            <i class="fas fa-city counter-icon" style="color: #f472b6;"></i>
-            <span class="counter-label">جدة:</span>
-            <span class="counter-value"><?php echo $jeddahCount; ?></span>
-        </div>
-        <div class="branch-counter-item">
-            <i class="fas fa-landmark counter-icon" style="color: #a78bfa;"></i>
-            <span class="counter-label">الرياض:</span>
-            <span class="counter-value"><?php echo $riyadhCount; ?></span>
-        </div>
-        <div class="branch-counter-item branch-counter-total">
-            <i class="fas fa-users counter-icon" style="color: #fff;"></i>
-            <span class="counter-label">الإجمالي:</span>
-            <span class="counter-value"><?php echo $totalCount; ?></span>
-        </div>
-    </div>
+    <div class="knockout-tree">
 
+        <!-- العمود الأول -->
+        <div class="round round1">
+
+            <div class="branch-counter-item match-card">
+                <i class="fas fa-building counter-icon" style="color:#60a5fa"></i>
+                <span class="counter-label">ينبع:</span>
+                <span class="counter-value"><?= $yanbuCount ?></span>
+            </div>
+
+            <div class="branch-counter-item match-card">
+                <i class="fas fa-city counter-icon" style="color:#f472b6"></i>
+                <span class="counter-label">جدة:</span>
+                <span class="counter-value"><?= $jeddahCount ?></span>
+            </div>
+
+            <div class="branch-counter-item match-card">
+                <i class="fas fa-landmark counter-icon" style="color:#a78bfa"></i>
+                <span class="counter-label">الرياض:</span>
+                <span class="counter-value"><?= $riyadhCount ?></span>
+            </div>
+
+        </div>
+
+        <!-- العمود الثاني -->
+        <div class="round round3">
+
+            <div class="transfer-node match-card" style="margin-top:5px !important">
+                <i class="fas fa-exchange-alt counter-icon" style="color:#f59e0b"></i>
+                <span class="counter-label">نقل الخدمات:</span>
+                <span class="counter-value"s><?= $yanbuTransfer ?></span>
+            </div>
+
+            <div class="transfer-node match-card" style="margin-top:40px !important">
+                <i class="fas fa-exchange-alt counter-icon" style="color:#f59e0b"></i>
+                <span class="counter-label">نقل الخدمات:</span>
+                <span class="counter-value"><?= $jeddahTransfer ?></span>
+            </div>
+
+            <div class="transfer-node match-card" style="margin-top:45px !important">
+                <i class="fas fa-exchange-alt counter-icon" style="color:#f59e0b"></i>
+                <span class="counter-label">نقل الخدمات:</span>
+                <span class="counter-value"><?= $riyadhTransfer ?></span>
+            </div>
+
+        </div>
+
+        <!-- العمود الثالث -->
+        <div class="round round3">
+
+            <div class="branch-counter-item transfer-total">
+                <i class="fas fa-random counter-icon" style="color:#fbbf24"></i>
+                <span class="counter-label">إجمالي نقل الخدمات:</span>
+                <span class="counter-value"><?= $totalTransfer ?></span>
+            </div>
+
+        </div>
+
+        <!-- العمود الرابع -->
+        <div class="round round2">
+
+            <div class="branch-counter-item branch-counter-total">
+                <i class="fas fa-users counter-icon" style="color:#fff"></i>
+                <span class="counter-label">الإجمالي:</span>
+                <span class="counter-value"><?= $totalCount ?></span>
+            </div>
+
+        </div>
+
+    </div>
+    
     <button class="mobile-menu-btn" onclick="toggleUserMenu()">
         <i class="fas fa-bars"></i>
     </button>

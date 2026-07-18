@@ -862,7 +862,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (result.success) {
                     addModal.style.display = 'none';
                     addBody.innerHTML = '';
-                    clearFilters();
+                    //clearFilters();
                     showToast(`تم إضافة ${data.length} عاملة بنجاح`, 'add');
                     fetchWorkers();
                 } else {
@@ -959,7 +959,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const result = await response.json();
                 if (result.success) {
                     editModal.style.display = 'none';
-                    clearFilters();
+                    //clearFilters();
                     if (result.affected_count > 0) {
                         showToast(`تم تحديث ${result.affected_count} سجل بنجاح من أصل ${data.length}`, 'edit');
                     } else {
@@ -988,7 +988,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
                 const result = await response.json();
                 if (result.success) {
-                    clearFilters();
+                    //clearFilters();
                     showToast(`تم حذف ${selectedIds.length} عاملة بنجاح`, 'delete');
                     fetchWorkers();
                 } else {
@@ -1011,7 +1011,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
                 const result = await response.json();
                 if (result.success) {
-                    clearFilters();
+                    //clearFilters();
                     showToast(`تم أرشفة ${selectedIds.length} عاملة بنجاح`, 'add');
                     fetchWorkers();
                 } else {
@@ -1034,7 +1034,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
                 const result = await response.json();
                 if (result.success) {
-                    clearFilters();
+                    //clearFilters();
                     showToast(`تم إلغاء أرشفة ${selectedIds.length} عاملة بنجاح`, 'add');
                     fetchWorkers();
                 } else {

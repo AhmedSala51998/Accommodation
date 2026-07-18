@@ -1,0 +1,58 @@
+/* أنماط حقول الجدول القابلة للتعديل */
+
+/* إضافة مؤشر للخلايا القابلة للتعديل */
+td[onclick*="makeCellEditable"] {
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+td[onclick*="makeCellEditable"]:hover {
+    background-color: rgba(59, 130, 246, 0.05);
+}
+
+/* حقول الإدخال والقوائم المنسدلة */
+.cell-edit-input, .cell-edit-select {
+    width: 100%;
+    border: none;
+    background: transparent;
+    padding: 4px;
+    font-family: inherit;
+    font-size: inherit;
+    color: inherit;
+}
+
+.cell-edit-input {
+    text-align: inherit;
+}
+
+.cell-edit-select {
+    cursor: pointer;
+}
+
+.cell-edit-input:focus, .cell-edit-select:focus {
+    outline: none;
+    background-color: rgba(59, 130, 246, 0.1);
+}
+
+/* مؤشر التحميل */
+.cell-loading {
+    text-align: center;
+    padding: 8px 0;
+}
+
+.cell-loading i {
+    color: #3b82f6;
+    font-size: 16px;
+}
+
+/* رسائل النجاح والخطأ */
+.cell-success {
+    color: #10b981;
+    font-weight: bold;
+}
+
+.cell-error {
+    color: #ef4444;
+    font-weight: bold;
+}

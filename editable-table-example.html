@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مثال على الجدول القابل للتعديل</title>
+    <link rel="stylesheet" href="assets/css/bootstrap.rtl.min.css">
+    <link rel="stylesheet" href="assets/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/editable-table.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .table-responsive {
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 12px;
+            text-align: right;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+            color: #495057;
+        }
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+        .badge {
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        .badge-success {
+            background-color: #28a745;
+            color: white;
+        }
+        .badge-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 15px 25px;
+            border-radius: 4px;
+            color: white;
+            font-weight: bold;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .toast.show {
+            opacity: 1;
+        }
+        .toast-success {
+            background-color: #28a745;
+        }
+        .toast-error {
+            background-color: #dc3545;
+        }
+        .toast-info {
+            background-color: #17a2b8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>مثال على الجدول القابل للتعديل</h1>
+        <p>يمكنك تعديل أي حقل في الجدول بالنقر عليه. سيتم تحديث البيانات تلقائيًا عند الضغط على Enter أو الخروج من الحقل.</p>
+
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>الاسم</th>
+                        <th>الجواز</th>
+                        <th>الجنسية</th>
+                        <th>المكتب</th>
+                        <th>العميل</th>
+                        <th>الهوية</th>
+                        <th>حالة الضمان</th>
+                        <th>الموقع</th>
+                        <th>تاريخ الدخول</th>
+                        <th>الراتب</th>
+                        <th>نوع الإجراء</th>
+                        <th>التسوية</th>
+                    </tr>
+                </thead>
+                <tbody id="workerBody">
+                    <!-- سيتم ملء البيانات بواسطة JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/bootstrap.min.js"></script>
+    <script src="assets/js/editable-table.js"></script>
+    <script>
+        // دالة لجلب البيانات من الخادم
+        function fetchWorkers() {
+            fetch('api.php?action=list&archived=0')
+                .then(response => response.json())
+                .then(data => {
+                    renderTable(data);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+        // دالة لعرض البيانات في الجدول
+        function renderTable(data) {
+            const workerBody = document.getElementById('workerBody');
+
+            workerBody.innerHTML = data.map((row, index) => `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td><strong>${row.worker_name}</strong></td>
+                    <td onclick="makeCellEditable(this, 'passport', 'text', '${row.passport || ''}', [], ${row.id})" style="cursor: pointer;">${row.passport || ''}</td>
+                    <td onclick="makeCellEditable(this, 'nationality', 'select', '${row.nationality || ''}', ${JSON.stringify(getNationalityOptions())}, ${row.id})" style="cursor: pointer;">${row.nationality || ''}</td>
+                    <td onclick="makeCellEditable(this, 'office', 'select', '${row.office || ''}', ${JSON.stringify(getOfficeOptions(row.office))}, ${row.id})" style="cursor: pointer;">${row.office || ''}</td>
+                    <td onclick="makeCellEditable(this, 'customer', 'text', '${row.customer || ''}', [], ${row.id})" style="cursor: pointer;">${row.customer || ''}</td>
+                    <td onclick="makeCellEditable(this, 'national_id', 'text', '${row.national_id || ''}', [], ${row.id})" style="cursor: pointer;">${row.national_id || ''}</td>
+                    <td onclick="makeCellEditable(this, 'guarantee_status', 'badge', '${row.guarantee_status || ''}', ${JSON.stringify([{value: 'داخل الضمان', label: 'داخل الضمان'}, {value: 'خارج الضمان', label: 'خارج الضمان'}])}, ${row.id})" style="cursor: pointer;"><span class="badge ${row.guarantee_status === 'داخل الضمان' ? 'badge-success' : 'badge-danger'}">${row.guarantee_status}</span></td>
+                    <td onclick="makeCellEditable(this, 'housing_location', 'select', '${row.housing_location || ''}', ${JSON.stringify(getHousingOptions())}, ${row.id})" style="cursor: pointer;">${row.housing_location || ''}</td>
+                    <td onclick="makeCellEditable(this, 'entry_date', 'date', '${row.entry_date || ''}', [], ${row.id})" style="cursor: pointer;">${row.entry_date || ''}</td>
+                    <td onclick="makeCellEditable(this, 'salary', 'number', '${row.salary || 0}', [], ${row.id})" style="cursor: pointer;">${parseFloat(row.salary).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+                    <td onclick="makeCellEditable(this, 'action_type', 'select', '${row.action_type || ''}', ${JSON.stringify(getActionOptions())}, ${row.id})" style="cursor: pointer;">${row.action_type || ''}</td>
+                    <td onclick="makeCellEditable(this, 'settlement_status', 'select', '${row.settlement_status || ''}', ${JSON.stringify(getSettlementOptions())}, ${row.id})" style="cursor: pointer;">${row.settlement_status || ''}</td>
+                </tr>
+            `).join('');
+        }
+
+        // دوال للحصول على الخيارات للقوائم المنسدلة
+        function getNationalityOptions() {
+            return [
+                {value: 'سعودية', label: 'سعودية'},
+                {value: 'يمنية', label: 'يمنية'},
+                {value: 'سورية', label: 'سورية'},
+                {value: 'مصرية', label: 'مصرية'},
+                {value: 'أخرى', label: 'أخرى'}
+            ];
+        }
+
+        function getOfficeOptions(selectedOffice) {
+            // يجب استبدال هذه الدالة بالدالة الفعلية التي تجلب المكاتب من قاعدة البيانات
+            return [
+                {value: 'مكتب الرياض', label: 'مكتب الرياض'},
+                {value: 'مكتب جدة', label: 'مكتب جدة'},
+                {value: 'مكتب الدمام', label: 'مكتب الدمام'},
+                {value: 'مكتب الإحساء', label: 'مكتب الإحساء'}
+            ];
+        }
+
+        function getHousingOptions() {
+            return [
+                {value: 'رياض', label: 'رياض'},
+                {value: 'جدة', label: 'جدة'},
+                {value: 'الدمام', label: 'الدمام'},
+                {value: 'الخبر', label: 'الخبر'},
+                {value: 'الاحساء', label: 'الاحساء'}
+            ];
+        }
+
+        function getActionOptions() {
+            return [
+                {value: 'إيداع', label: 'إيداع'},
+                {value: 'تحرير', label: 'تحرير'},
+                {value: 'تجديد', label: 'تجديد'},
+                {value: 'ترحيل', label: 'ترحيل'}
+            ];
+        }
+
+        function getSettlementOptions() {
+            return [
+                {value: 'لم يتم الخصم', label: 'لم يتم الخصم'},
+                {value: 'تم الخصم', label: 'تم الخصم'},
+                {value: 'خصم جزئي', label: 'خصم جزئي'}
+            ];
+        }
+
+        // تحميل البيانات عند تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', fetchWorkers);
+    </script>
+</body>
+</html>
