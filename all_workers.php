@@ -447,7 +447,7 @@
 
     <div id="toastContainer" class="toast-container"></div>
     <script>const PAGE_TYPE = 'all';</script>
-    <script src="assets/js/app.js?v=1.8"></script>
+    <script src="assets/js/app.js?v=1.9"></script>
     <!-- Standalone Excel Script (Force Refresh) -->
     <script src="assets/js/excel_importer.js?v=1.4"></script>
 </body>
