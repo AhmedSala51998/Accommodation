@@ -708,6 +708,89 @@ $totalCount =
     background:#3b82f6;
     color:#fff;
 }
+
+
+/* ===== Rental Modals ===== */
+
+#rentalModal .modal-content,
+#rentalProfileModal .modal-content{
+    border:0;
+    border-radius:20px;
+    overflow:hidden;
+    box-shadow:0 20px 60px rgba(0,0,0,.15);
+}
+
+#rentalModal .modal-header,
+#rentalProfileModal .modal-header{
+    background:linear-gradient(135deg,#ff7b54,#ffb347);
+    color:#fff;
+    border:0;
+    padding:20px 25px;
+}
+
+#rentalModal .modal-title,
+#rentalProfileModal .modal-title{
+    font-size:20px;
+    font-weight:700;
+}
+
+#rentalModal .modal-body,
+#rentalProfileModal .modal-body{
+    padding:25px;
+    background:#fafbfc;
+}
+
+#rentalModal label{
+    font-weight:600;
+    color:#444;
+    margin-bottom:8px;
+    display:block;
+}
+
+#rentalModal .form-control{
+    border-radius:12px;
+    min-height:48px;
+    border:1px solid #e5e7eb;
+    box-shadow:none;
+}
+
+#rentalModal .form-control:focus{
+    border-color:#ff9f43;
+    box-shadow:0 0 0 4px rgba(255,159,67,.15);
+}
+
+#rentalModal textarea{
+    min-height:120px;
+    resize:none;
+}
+
+#rentalModal .modal-footer{
+    border:0;
+    padding:20px 25px;
+    background:#fff;
+}
+
+#saveRental{
+    min-width:180px;
+    border-radius:12px;
+    font-weight:700;
+    padding:12px 25px;
+    background:linear-gradient(135deg,#ff7b54,#ffb347);
+    border:0;
+}
+
+#saveRental:hover{
+    transform:translateY(-2px);
+}
+
+.rental-card{
+    background:#fff;
+    border-radius:15px;
+    padding:18px;
+    margin-bottom:15px;
+    border:1px solid #eee;
+    box-shadow:0 4px 12px rgba(0,0,0,.04);
+}
     </style>
 </head>
 
@@ -1327,7 +1410,32 @@ function toggleUserMenu() {
     document.getElementById('userMenu').classList.toggle('show');
 }
 
-$(document).on('click', '#saveRental', function() {
+$(document).on('click', '#saveRental', function () {
+
+    let renter_name     = $('#renter_name').val().trim();
+    let renter_phone    = $('#renter_phone').val().trim();
+    let departure_date  = $('#departure_date').val();
+    let rent_start_date = $('#rent_start_date').val();
+
+    if(renter_name == ''){
+        Swal.fire('تنبيه','أدخل اسم المستأجر','warning');
+        return;
+    }
+
+    if(renter_phone == ''){
+        Swal.fire('تنبيه','أدخل جوال المستأجر','warning');
+        return;
+    }
+
+    if(departure_date == ''){
+        Swal.fire('تنبيه','حدد تاريخ خروج العاملة','warning');
+        return;
+    }
+
+    if(rent_start_date == ''){
+        Swal.fire('تنبيه','حدد بداية التأجير','warning');
+        return;
+    }
 
     $.ajax({
         url: 'save_rental.php',
@@ -1335,44 +1443,62 @@ $(document).on('click', '#saveRental', function() {
         dataType: 'json',
         data: {
             worker_id: $('#worker_id').val(),
-            renter_name: $('#renter_name').val(),
-            renter_phone: $('#renter_phone').val(),
-            departure_date: $('#departure_date').val(),
-            rent_start_date: $('#rent_start_date').val(),
+            renter_name: renter_name,
+            renter_phone: renter_phone,
+            departure_date: departure_date,
+            rent_start_date: rent_start_date,
             rent_end_date: $('#rent_end_date').val(),
             returned_date: $('#returned_date').val(),
             notes: $('#notes').val()
         },
 
-        success: function(res) {
+        beforeSend:function(){
+
+            $('#saveRental')
+                .prop('disabled',true)
+                .html('<i class="fas fa-spinner fa-spin"></i> جاري الحفظ');
+
+        },
+
+        success:function(res){
+
+            $('#saveRental')
+                .prop('disabled',false)
+                .html('حفظ');
 
             if(res.success){
 
                 Swal.fire({
-                    icon: 'success',
-                    title: 'تم الحفظ',
-                    text: 'تم حفظ بيانات التأجير بنجاح'
+                    icon:'success',
+                    title:'تم الحفظ',
+                    text:'تم حفظ بيانات التأجير بنجاح'
                 });
 
-                $('#rentalModal').modal('hide');
+                bootstrap.Modal
+                .getInstance(document.getElementById('rentalModal'))
+                .hide();
 
             }else{
 
                 Swal.fire({
-                    icon: 'error',
-                    title: 'خطأ',
-                    text: 'فشل الحفظ'
+                    icon:'error',
+                    title:'خطأ',
+                    text:'فشل الحفظ'
                 });
 
             }
         },
 
-        error: function() {
+        error:function(){
+
+            $('#saveRental')
+                .prop('disabled',false)
+                .html('حفظ');
 
             Swal.fire({
-                icon: 'error',
-                title: 'خطأ',
-                text: 'تعذر الاتصال بالخادم'
+                icon:'error',
+                title:'خطأ',
+                text:'تعذر الاتصال بالخادم'
             });
 
         }
