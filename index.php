@@ -1321,6 +1321,7 @@ $totalCount =
     <script src="assets/js/app.js?v=1.9"></script>
     <!-- Standalone Excel Script (Force Refresh) -->
     <script src="assets/js/excel_importer.js?v=1.4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
 function toggleUserMenu() {
     document.getElementById('userMenu').classList.toggle('show');

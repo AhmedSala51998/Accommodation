@@ -1304,7 +1304,11 @@ function openRentalModal(workerId)
 {
     $('#worker_id').val(workerId);
 
-    $('#rentalModal').modal('show');
+    var rentalModal = new bootstrap.Modal(
+        document.getElementById('rentalModal')
+    );
+
+    rentalModal.show();
 }
 
 function openRentalProfile(workerId)
@@ -1313,5 +1317,9 @@ function openRentalProfile(workerId)
         'rental_profile.php?worker_id=' + workerId
     );
 
-    $('#rentalProfileModal').modal('show');
+    var profileModal = new bootstrap.Modal(
+        document.getElementById('rentalProfileModal')
+    );
+
+    profileModal.show();
 }
