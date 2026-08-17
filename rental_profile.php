@@ -165,6 +165,7 @@ foreach($rows as $r){
             <th>نهاية التأجير</th>
             <th>تاريخ العودة</th>
             <th>الحالة</th>
+            <th>الإجراءات</th>
         </tr>
 
     </thead>
@@ -197,7 +198,13 @@ foreach($rows as $r){
 
             <td>
 
-                <?php if(!empty($row['returned_date'])): ?>
+                <?php
+                $isReturned =
+                    !empty($row['returned_date']) &&
+                    $row['returned_date'] !== '0000-00-00';
+                ?>
+
+                <?php if($isReturned): ?>
 
                     <span class="badge-returned">
                         عادت
@@ -213,9 +220,152 @@ foreach($rows as $r){
 
             </td>
 
+            <td>
+
+                <?php if(!$isReturned): ?>
+
+                    <button
+                        class="btn btn-sm btn-warning edit-return-btn"
+                        data-rental-id="<?= $row['id'] ?>"
+                        data-returned-date="<?= $row['returned_date'] ?>"
+                        title="تحديث تاريخ العودة">
+
+                        <i class="fas fa-edit"></i>
+
+                    </button>
+
+                <?php else: ?>
+
+                    <button
+                        class="btn btn-sm btn-success"
+                        disabled>
+
+                        <i class="fas fa-check"></i>
+
+                    </button>
+
+                <?php endif; ?>
+
+            </td>
+
         </tr>
 
     <?php endforeach; ?>
+
+    <div class="modal fade" id="returnDateModal">
+
+        <div class="modal-dialog">
+
+            <div class="modal-content">
+
+                <div class="modal-header bg-warning text-dark">
+
+                    <h5 class="modal-title">
+
+                        <i class="fas fa-calendar-check"></i>
+
+                        تحديث تاريخ العودة
+
+                    </h5>
+
+                </div>
+
+                <div class="modal-body">
+
+                    <input type="hidden" id="rental_id">
+
+                    <label class="mb-2">
+                        تاريخ العودة
+                    </label>
+
+                    <input type="date"
+                        id="new_returned_date"
+                        class="form-control">
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+
+                        إغلاق
+
+                    </button>
+
+                    <button
+                        class="btn btn-warning"
+                        id="saveReturnedDate">
+
+                        <i class="fas fa-save"></i>
+
+                        حفظ
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        $(document).on('click','.edit-return-btn',function(){
+
+            $('#rental_id').val(
+                $(this).data('rental-id')
+            );
+
+            $('#new_returned_date').val(
+                $(this).data('returned-date')
+            );
+
+            new bootstrap.Modal(
+                document.getElementById('returnDateModal')
+            ).show();
+
+        });
+
+        $(document).on('click','#saveReturnedDate',function(){
+
+            $.ajax({
+
+                url:'update_returned_date.php',
+
+                type:'POST',
+
+                dataType:'json',
+
+                data:{
+                    rental_id:$('#rental_id').val(),
+                    returned_date:$('#new_returned_date').val()
+                },
+
+                success:function(res){
+
+                    if(res.success){
+
+                        Swal.fire({
+                            icon:'success',
+                            title:'تم التحديث',
+                            text:'تم تحديث تاريخ العودة'
+                        }).then(()=>{
+                            openRentalProfile(
+                                $('#worker_id').val()
+                            );
+                        });
+
+                    }
+
+                }
+
+            });
+
+        });
+    </script>
 
     </tbody>
 
