@@ -349,15 +349,29 @@ foreach($rows as $r){
 
                     if(res.success){
 
+                        var modalEl = document.getElementById('returnDateModal');
+
+                        var modal =
+                            bootstrap.Modal.getInstance(modalEl) ||
+                            new bootstrap.Modal(modalEl);
+
+                        modal.hide();
+
                         Swal.fire({
                             icon:'success',
                             title:'تم التحديث',
-                            text:'تم تحديث تاريخ العودة'
-                        }).then(()=>{
+                            text:'تم تحديث تاريخ العودة',
+                            timer:1500,
+                            showConfirmButton:false
+                        });
+
+                        setTimeout(function(){
+
                             openRentalProfile(
                                 $('#worker_id').val()
                             );
-                        });
+
+                        },500);
 
                     }
 
