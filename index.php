@@ -1209,6 +1209,103 @@ $totalCount =
         </div>
     </div>
 
+    <div class="modal fade" id="rentalModal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        بيانات التأجير
+                    </h5>
+                </div>
+
+                <div class="modal-body">
+
+                    <input type="hidden" id="worker_id">
+
+                    <div class="row">
+
+                        <div class="col-md-6 mb-3">
+                            <label>اسم المستأجر</label>
+                            <input type="text"
+                                id="renter_name"
+                                class="form-control">
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label>جوال المستأجر</label>
+                            <input type="text"
+                                id="renter_phone"
+                                class="form-control">
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label>تاريخ خروج العاملة</label>
+                            <input type="date"
+                                id="departure_date"
+                                class="form-control">
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label>بداية التأجير</label>
+                            <input type="date"
+                                id="rent_start_date"
+                                class="form-control">
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label>نهاية التأجير</label>
+                            <input type="date"
+                                id="rent_end_date"
+                                class="form-control">
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label>عودة العاملة</label>
+                            <input type="date"
+                                id="returned_date"
+                                class="form-control">
+                        </div>
+
+                        <div class="col-md-12">
+                            <label>ملاحظات</label>
+                            <textarea id="notes"
+                                    class="form-control"></textarea>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button class="btn btn-primary"
+                            id="saveRental">
+
+                        حفظ
+
+                    </button>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="rentalProfileModal">
+    <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5>سجل التأجير</h5>
+                </div>
+
+                <div class="modal-body" id="rentalProfileBody">
+
+                </div>
+
+            </div>
+        </div>
+    </div>
     <div id="toastContainer" class="toast-container"></div>
     <script>const PAGE_TYPE = 'main';</script>
     <script src="assets/js/app.js?v=1.9"></script>
@@ -1218,6 +1315,59 @@ $totalCount =
 function toggleUserMenu() {
     document.getElementById('userMenu').classList.toggle('show');
 }
+
+$(document).on('click', '#saveRental', function() {
+
+    $.ajax({
+        url: 'save_rental.php',
+        type: 'POST',
+        dataType: 'json',
+        data: {
+            worker_id: $('#worker_id').val(),
+            renter_name: $('#renter_name').val(),
+            renter_phone: $('#renter_phone').val(),
+            departure_date: $('#departure_date').val(),
+            rent_start_date: $('#rent_start_date').val(),
+            rent_end_date: $('#rent_end_date').val(),
+            returned_date: $('#returned_date').val(),
+            notes: $('#notes').val()
+        },
+
+        success: function(res) {
+
+            if(res.success){
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'تم الحفظ',
+                    text: 'تم حفظ بيانات التأجير بنجاح'
+                });
+
+                $('#rentalModal').modal('hide');
+
+            }else{
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: 'فشل الحفظ'
+                });
+
+            }
+        },
+
+        error: function() {
+
+            Swal.fire({
+                icon: 'error',
+                title: 'خطأ',
+                text: 'تعذر الاتصال بالخادم'
+            });
+
+        }
+    });
+
+});
 </script>
 </body>
 
