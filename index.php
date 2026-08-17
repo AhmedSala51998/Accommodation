@@ -791,6 +791,92 @@ $totalCount =
     border:1px solid #eee;
     box-shadow:0 4px 12px rgba(0,0,0,.04);
 }
+
+
+
+
+.rental-modal .modal-content{
+    border:none;
+    border-radius:28px;
+    overflow:hidden;
+    box-shadow:0 30px 80px rgba(0,0,0,.15);
+}
+
+.rental-header{
+    background:linear-gradient(
+        135deg,
+        #ff7b00,
+        #ffb347
+    );
+    color:#fff;
+    border:none;
+    padding:25px 30px;
+}
+
+.rental-header-icon{
+    width:65px;
+    height:65px;
+    border-radius:20px;
+    background:rgba(255,255,255,.2);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:28px;
+    margin-left:15px;
+}
+
+.rental-section{
+    background:#fff;
+    border-radius:20px;
+    padding:22px;
+    margin-bottom:20px;
+    border:1px solid #edf1f7;
+}
+
+.section-title{
+    font-weight:700;
+    font-size:16px;
+    margin-bottom:20px;
+    color:#ff7b00;
+}
+
+.section-title i{
+    margin-left:8px;
+}
+
+.form-floating>.form-control{
+    height:60px;
+    border-radius:15px;
+    border:1px solid #e8ecf3;
+}
+
+.form-floating>.form-control:focus{
+    border-color:#ff9b3d;
+    box-shadow:0 0 0 5px rgba(255,155,61,.15);
+}
+
+.rental-notes{
+    min-height:120px;
+    border-radius:15px;
+}
+
+.rental-footer{
+    border:none;
+    padding:20px 30px;
+}
+
+.rental-save-btn{
+    background:linear-gradient(
+        135deg,
+        #ff7b00,
+        #ffb347
+    );
+    border:none;
+    color:#fff;
+    border-radius:15px;
+    padding:12px 30px;
+    font-weight:700;
+}
     </style>
 </head>
 
@@ -1316,66 +1402,119 @@ $totalCount =
 
                     <input type="hidden" id="worker_id">
 
-                    <div class="row">
+                    <div class="rental-section">
 
-                        <div class="col-md-6 mb-3">
-                            <label>اسم المستأجر</label>
-                            <input type="text"
-                                id="renter_name"
-                                class="form-control">
+                        <div class="section-title">
+                            <i class="fas fa-user"></i>
+                            بيانات المستأجر
                         </div>
 
-                        <div class="col-md-6 mb-3">
-                            <label>جوال المستأجر</label>
-                            <input type="text"
-                                id="renter_phone"
-                                class="form-control">
+                        <div class="row">
+
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    <input type="text"
+                                        id="renter_name"
+                                        class="form-control"
+                                        placeholder=" ">
+                                    <label>اسم المستأجر</label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    <input type="text"
+                                        id="renter_phone"
+                                        class="form-control"
+                                        placeholder=" ">
+                                    <label>رقم الجوال</label>
+                                </div>
+                            </div>
+
                         </div>
 
-                        <div class="col-md-6 mb-3">
-                            <label>تاريخ خروج العاملة</label>
-                            <input type="date"
-                                id="departure_date"
-                                class="form-control">
+                    </div>
+
+
+                    <div class="rental-section">
+
+                        <div class="section-title">
+                            <i class="fas fa-calendar-alt"></i>
+                            دورة التأجير
                         </div>
 
-                        <div class="col-md-6 mb-3">
-                            <label>بداية التأجير</label>
-                            <input type="date"
-                                id="rent_start_date"
-                                class="form-control">
+                        <div class="row">
+
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    <input type="date"
+                                        id="departure_date"
+                                        class="form-control">
+                                    <label>تاريخ خروج العاملة</label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    <input type="date"
+                                        id="rent_start_date"
+                                        class="form-control">
+                                    <label>بداية التأجير</label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    <input type="date"
+                                        id="rent_end_date"
+                                        class="form-control">
+                                    <label>نهاية التأجير</label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    <input type="date"
+                                        id="returned_date"
+                                        class="form-control">
+                                    <label>عودة العاملة</label>
+                                </div>
+                            </div>
+
                         </div>
 
-                        <div class="col-md-6 mb-3">
-                            <label>نهاية التأجير</label>
-                            <input type="date"
-                                id="rent_end_date"
-                                class="form-control">
+                    </div>
+
+
+                    <div class="rental-section">
+
+                        <div class="section-title">
+                            <i class="fas fa-sticky-note"></i>
+                            الملاحظات
                         </div>
 
-                        <div class="col-md-6 mb-3">
-                            <label>عودة العاملة</label>
-                            <input type="date"
-                                id="returned_date"
-                                class="form-control">
-                        </div>
-
-                        <div class="col-md-12">
-                            <label>ملاحظات</label>
-                            <textarea id="notes"
-                                    class="form-control"></textarea>
-                        </div>
+                        <textarea id="notes"
+                                class="form-control rental-notes"></textarea>
 
                     </div>
 
                 </div>
 
-                <div class="modal-footer">
+                <div class="modal-footer rental-footer">
 
-                    <button class="btn btn-primary"
+                    <button class="btn btn-light"
+                            data-bs-dismiss="modal">
+
+                        إغلاق
+
+                    </button>
+
+                    <button class="btn rental-save-btn"
                             id="saveRental">
 
-                        حفظ
+                        <i class="fas fa-save"></i>
+
+                        حفظ البيانات
 
                     </button>
 
