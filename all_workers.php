@@ -184,6 +184,7 @@
                     <option value="السكن">السكن</option>
                     <option value="نقل خدمات">نقل خدمات</option>
                     <option value="خروج نهائي">خروج نهائي</option>
+                    <option value="تأجير">تأجير</option>
                     <option value="هروب">هروب</option>
                     <option value="اخرى">اخرى</option>
                 </select>

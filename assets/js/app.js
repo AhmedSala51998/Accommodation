@@ -80,6 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <option value="السكن">السكن</option>
         <option value="نقل خدمات">نقل خدمات</option>
         <option value="خروج نهائي">خروج نهائي</option>
+        <option value="تأجير">تأجير</option>
         <option value="هروب">هروب</option>
         <option value="اخرى">اخرى</option>
     `;
@@ -580,6 +581,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     'السكن': 'داخل السكن',
                     'نقل خدمات': 'قيد النقل',
                     'خروج نهائي': 'خارج النظام',
+                    'تأجير': 'ايجار',
                     'هروب': 'هارب',
                     'اخرى': ''
                 };

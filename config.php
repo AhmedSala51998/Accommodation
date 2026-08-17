@@ -1,13 +1,13 @@
 <?php
 // config.php
 $host = 'localhost';
-$db = 'u552468652_accommodation';
+/*$db = 'u552468652_accommodation';
 $user = 'u552468652_accommodation';
-$pass = 'Accommodation2026';
+$pass = 'Accommodation2026';*/
 
-/*$db = 'accommodation_db';
+$db = 'accommodation_db';
 $user = 'root';
-$pass = '';*/
+$pass = '';
 
 
 $charset = 'utf8mb4';

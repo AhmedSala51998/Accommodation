@@ -22,14 +22,20 @@ $transferCounts = [
     'الرياض' => 0
 ];
 
+$rentalCounts = [
+    'ينبع' => 0,
+    'جدة' => 0,
+    'الرياض' => 0
+];
+
 try {
 
-    // السكن فقط
+    // السكن فقط (استبعاد نقل الخدمات والتأجير)
     $stmt = $pdo->query("
         SELECT housing_location, COUNT(*) cnt
         FROM workers
         WHERE is_archived = 0
-        AND action_type != 'نقل خدمات'
+        AND action_type NOT IN ('نقل خدمات','تأجير')
         GROUP BY housing_location
     ");
 
@@ -37,7 +43,7 @@ try {
         $housingCounts[$row['housing_location']] = $row['cnt'];
     }
 
-    // نقل الخدمات فقط
+    // نقل الخدمات
     $stmt = $pdo->query("
         SELECT housing_location, COUNT(*) cnt
         FROM workers
@@ -50,26 +56,52 @@ try {
         $transferCounts[$row['housing_location']] = $row['cnt'];
     }
 
+    // التأجير
+    $stmt = $pdo->query("
+        SELECT housing_location, COUNT(*) cnt
+        FROM workers
+        WHERE is_archived = 0
+        AND action_type = 'تأجير'
+        GROUP BY housing_location
+    ");
+
+    while($row = $stmt->fetch()){
+        $rentalCounts[$row['housing_location']] = $row['cnt'];
+    }
+
 } catch(Exception $e){}
 
-$yanbuCount = $housingCounts['ينبع'];
+// السكن
+$yanbuCount  = $housingCounts['ينبع'];
 $jeddahCount = $housingCounts['جدة'];
 $riyadhCount = $housingCounts['الرياض'];
 
-$yanbuTransfer = $transferCounts['ينبع'];
+// نقل الخدمات
+$yanbuTransfer  = $transferCounts['ينبع'];
 $jeddahTransfer = $transferCounts['جدة'];
 $riyadhTransfer = $transferCounts['الرياض'];
+
+// التأجير
+$yanbuRental  = $rentalCounts['ينبع'];
+$jeddahRental = $rentalCounts['جدة'];
+$riyadhRental = $rentalCounts['الرياض'];
 
 $totalTransfer =
     $yanbuTransfer +
     $jeddahTransfer +
     $riyadhTransfer;
 
+$totalRental =
+    $yanbuRental +
+    $jeddahRental +
+    $riyadhRental;
+
 $totalCount =
     $yanbuCount +
     $jeddahCount +
     $riyadhCount +
-    $totalTransfer;
+    $totalTransfer +
+    $totalRental;
 ?>
 
 <!DOCTYPE html>
@@ -685,9 +717,10 @@ $totalCount =
     </div>
 
     <!-- عدادات الفروع -->
+    <!-- عدادات الفروع -->
     <div class="knockout-tree">
 
-        <!-- العمود الأول -->
+        <!-- العمود الأول : الفروع -->
         <div class="round round1">
 
             <div class="branch-counter-item match-card">
@@ -710,13 +743,13 @@ $totalCount =
 
         </div>
 
-        <!-- العمود الثاني -->
+        <!-- العمود الثاني : نقل الخدمات -->
         <div class="round round3">
 
             <div class="transfer-node match-card" style="margin-top:5px !important">
                 <i class="fas fa-exchange-alt counter-icon" style="color:#f59e0b"></i>
                 <span class="counter-label">نقل الخدمات:</span>
-                <span class="counter-value"s><?= $yanbuTransfer ?></span>
+                <span class="counter-value"><?= $yanbuTransfer ?></span>
             </div>
 
             <div class="transfer-node match-card" style="margin-top:40px !important">
@@ -733,7 +766,30 @@ $totalCount =
 
         </div>
 
-        <!-- العمود الثالث -->
+        <!-- العمود الثالث : التأجير -->
+        <div class="round round3">
+
+            <div class="transfer-node match-card" style="margin-top:5px !important">
+                <i class="fas fa-key counter-icon" style="color:#10b981"></i>
+                <span class="counter-label">التأجير:</span>
+                <span class="counter-value"><?= $yanbuRental ?></span>
+            </div>
+
+            <div class="transfer-node match-card" style="margin-top:40px !important">
+                <i class="fas fa-key counter-icon" style="color:#10b981"></i>
+                <span class="counter-label">التأجير:</span>
+                <span class="counter-value"><?= $jeddahRental ?></span>
+            </div>
+
+            <div class="transfer-node match-card" style="margin-top:45px !important">
+                <i class="fas fa-key counter-icon" style="color:#10b981"></i>
+                <span class="counter-label">التأجير:</span>
+                <span class="counter-value"><?= $riyadhRental ?></span>
+            </div>
+
+        </div>
+
+        <!-- العمود الرابع : الإجماليات -->
         <div class="round round3">
 
             <div class="branch-counter-item transfer-total">
@@ -742,9 +798,15 @@ $totalCount =
                 <span class="counter-value"><?= $totalTransfer ?></span>
             </div>
 
+            <div class="branch-counter-item transfer-total" style="margin-top:20px;">
+                <i class="fas fa-key counter-icon" style="color:#10b981"></i>
+                <span class="counter-label">إجمالي التأجير:</span>
+                <span class="counter-value"><?= $totalRental ?></span>
+            </div>
+
         </div>
 
-        <!-- العمود الرابع -->
+        <!-- العمود الخامس : الإجمالي الكلي -->
         <div class="round round2">
 
             <div class="branch-counter-item branch-counter-total">
@@ -893,6 +955,7 @@ $totalCount =
                     <option value="السكن">السكن</option>
                     <option value="نقل خدمات">نقل خدمات</option>
                     <option value="خروج نهائي">خروج نهائي</option>
+                    <option value="تأجير">تأجير</option>
                     <option value="هروب">هروب</option>
                     <option value="اخرى">اخرى</option>
                 </select>
