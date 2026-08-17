@@ -698,6 +698,16 @@ $totalCount =
     }
 
 }
+
+.btn-warning{
+    background:#f59e0b;
+    color:#fff;
+}
+
+.btn-primary{
+    background:#3b82f6;
+    color:#fff;
+}
     </style>
 </head>
 
