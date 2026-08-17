@@ -285,29 +285,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         <button class="icon-btn btn-note" onclick="showDetail('الملاحظات المالية', \`${row.financial_notes || ''}\`)" title="الملاحظات المالية">
                             <i class="fas fa-file-invoice-dollar"></i>
                         </button>
-                        ${
-                            (row.action_type || '').trim() === 'تأجير'
-                            ?
-                            `
-                            <button class="icon-btn btn-warning"
-                                onclick="openRentalModal(${row.id})"
-                                title="إدارة التأجير">
-
-                                <i class="fas fa-key"></i>
-
-                            </button>
-
-                            <button class="icon-btn btn-primary"
-                                onclick="openRentalProfile(${row.id})"
-                                title="بروفايل التأجير">
-
-                                <i class="fas fa-id-card"></i>
-
-                            </button>
-                            `
-                            :
-                            ''
-                        }
                     </td>
                 </tr>
             `).join('');
@@ -339,6 +316,29 @@ document.addEventListener('DOMContentLoaded', () => {
                         <button class="icon-btn btn-note" onclick="showDetail('الملاحظات المالية', \`${row.financial_notes || ''}\`)" title="الملاحظات المالية">
                             <i class="fas fa-file-invoice-dollar"></i>
                         </button>
+                        ${
+                            (row.action_type || '').trim() === 'تأجير'
+                            ?
+                            `
+                            <button class="icon-btn btn-warning"
+                                onclick="openRentalModal(${row.id})"
+                                title="إدارة التأجير">
+
+                                <i class="fas fa-key"></i>
+
+                            </button>
+
+                            <button class="icon-btn btn-primary"
+                                onclick="openRentalProfile(${row.id})"
+                                title="بروفايل التأجير">
+
+                                <i class="fas fa-id-card"></i>
+
+                            </button>
+                            `
+                            :
+                            ''
+                        }
                     </td>
                 </tr>
             `).join('');
